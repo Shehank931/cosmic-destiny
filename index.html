@@ -1,0 +1,2199 @@
+<!DOCTYPE html>
+<html lang="si" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cosmic Destiny - Created by Shehan Kavishka</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Noto+Sans+Sinhala:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sinhala: ['Noto Sans Sinhala', 'Poppins', 'sans-serif'],
+            mystic: ['Cinzel', 'serif'],
+            sans: ['Poppins', 'Noto Sans Sinhala', 'sans-serif'],
+          },
+          colors: {
+            cosmic: {
+              950: '#03020c',
+              900: '#060417',
+              800: '#0d0a2d',
+              700: '#1b124a',
+              gold: '#ffd166',
+              purple: '#9d4edd',
+              glow: '#c77dff',
+              cyan: '#06d6a0'
+            }
+          },
+          animation: {
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 6s ease-in-out infinite',
+            'spin-slow': 'spin 25s linear infinite',
+            'spin-reverse': 'spinReverse 35s linear infinite',
+            'glow-pulse': 'glow 3s infinite alternate'
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            spinReverse: {
+              '0%': { transform: 'rotate(360deg)' },
+              '100%': { transform: 'rotate(0deg)' },
+            },
+            glow: {
+              '0%': { filter: 'drop-shadow(0 0 10px rgba(157, 78, 221, 0.5))' },
+              '100%': { filter: 'drop-shadow(0 0 25px rgba(255, 209, 102, 0.8))' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #060417;
+      color: #f1f5f9;
+      font-family: 'Noto Sans Sinhala', 'Poppins', sans-serif;
+      overflow-x: hidden;
+    }
+    .glass-panel {
+      background: rgba(19, 13, 53, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(199, 125, 255, 0.28);
+      box-shadow: 0 15px 35px 0 rgba(0, 0, 0, 0.65);
+    }
+    .glass-card {
+      background: rgba(30, 20, 75, 0.55);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 209, 102, 0.22);
+      transition: all 0.3s ease;
+    }
+    .glass-card:hover {
+      border-color: rgba(255, 209, 102, 0.5);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px -5px rgba(157, 78, 221, 0.35);
+    }
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #fff275 0%, #ffd166 50%, #f77f00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #060417;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #3c096c;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #7b2cbf;
+    }
+    .orb-glow {
+      box-shadow: inset 0 0 50px #fff,
+                  inset 20px 0 80px #f0f,
+                  inset -20px 0 80px #0ff,
+                  inset 20px 0 300px #f0f,
+                  inset -20px 0 300px #0ff,
+                  0 0 50px #fff,
+                  -10px 0 80px #f0f,
+                  10px 0 80px #0ff;
+    }
+    @keyframes laserSweep {
+      0% { top: 0%; opacity: 0.9; }
+      50% { top: 92%; opacity: 1; }
+      100% { top: 0%; opacity: 0.9; }
+    }
+    .animate-laser {
+      animation: laserSweep 1.8s ease-in-out infinite;
+    }
+    .magic-rune-ring {
+      box-shadow: 0 0 45px rgba(255, 209, 102, 0.25), inset 0 0 45px rgba(157, 78, 221, 0.3);
+      animation: runeRotate 30s linear infinite;
+    }
+    @keyframes runeRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .magic-portal-box {
+      box-shadow: 0 0 60px rgba(157, 78, 221, 0.45), 0 0 20px rgba(255, 209, 102, 0.35);
+    }
+    .magic-sparkle-dot {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: sparkleFade 0.8s ease-out forwards;
+    }
+    @keyframes sparkleFade {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0); opacity: 0; }
+    }
+  </style>
+</head>
+<body class="min-h-screen relative flex flex-col justify-between selection:bg-purple-600 selection:text-white" onpointerdown="createMagicSparkles(event)">
+
+  <canvas id="cosmic-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+  <div class="fixed top-1/4 left-10 w-96 h-96 bg-purple-900/30 rounded-full blur-3xl pointer-events-none -z-10 animate-pulse-slow"></div>
+  <div class="fixed bottom-10 right-10 w-96 h-96 bg-amber-600/20 rounded-full blur-3xl pointer-events-none -z-10 animate-pulse-slow"></div>
+
+  <header class="relative z-20 border-b border-purple-900/40 bg-cosmic-900/85 backdrop-blur-md px-4 py-4 sm:px-8">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-4">
+      
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="resetApp()">
+        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-700 via-amber-400 to-indigo-600 p-0.5 shadow-lg shadow-purple-900/50 flex-shrink-0">
+          <div class="w-full h-full bg-cosmic-900 rounded-full flex items-center justify-center">
+            <i class="fa-solid fa-wand-magic-sparkles text-amber-300 text-xl animate-spin-slow"></i>
+          </div>
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-black font-mystic tracking-wider gold-gradient-text">COSMIC DESTINY</h1>
+          <p class="text-xs text-purple-300 tracking-wide">දෛවයේ රහස් දොරටුව • Future Oracle</p>
+          
+          <div class="inline-flex flex-wrap items-center gap-2 mt-2">
+            <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/30 via-yellow-400/25 to-purple-600/30 border-2 border-amber-400/80 text-xs sm:text-sm font-black text-amber-300 tracking-wide uppercase shadow-lg shadow-amber-500/25">
+              <i class="fa-solid fa-crown text-amber-400 text-sm animate-pulse"></i>
+              <span>Created by Shehan Kavishka</span>
+            </span>
+
+            <a href="https://wa.me/94703347096" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 border border-emerald-300/60 text-white text-xs sm:text-sm font-black shadow-lg shadow-emerald-950/60 hover:scale-105 active:scale-95 transition" title="WhatsApp Contact">
+              <i class="fa-brands fa-whatsapp text-white text-base"></i>
+              <span>0703347096</span>
+            </a>
+
+            <a href="mailto:shehank931@gmail.com" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 border border-blue-300/60 text-white text-xs sm:text-sm font-black shadow-lg shadow-blue-950/60 hover:scale-105 active:scale-95 transition" title="Email Contact">
+              <i class="fa-solid fa-envelope text-white text-sm"></i>
+              <span>shehank931@gmail.com</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <button id="audio-btn" onclick="toggleAudio()" class="px-3 py-2 rounded-xl glass-card text-purple-300 hover:text-amber-300 text-xs sm:text-sm flex items-center gap-2 border border-purple-800">
+          <i id="audio-icon" class="fa-solid fa-volume-xmark"></i>
+          <span class="hidden sm:inline" id="audio-label">ශබ්දය අක්‍රියයි</span>
+        </button>
+
+        <button id="lang-btn" onclick="toggleLanguage()" class="px-3 py-2 rounded-xl glass-card text-amber-300 hover:text-white text-xs sm:text-sm flex items-center gap-1 font-bold border border-amber-500/30">
+          <i class="fa-solid fa-globe"></i>
+          <span id="lang-label">English</span>
+        </button>
+
+        <button id="auth-nav-btn" onclick="openLoginModal()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-700 via-indigo-600 to-amber-500 hover:from-purple-600 hover:to-amber-400 text-white text-xs sm:text-sm font-extrabold flex items-center gap-2 border border-purple-400/40 shadow-lg shadow-purple-900/40 active:scale-95 transition">
+          <i class="fa-solid fa-lock text-amber-300 text-base" id="auth-nav-icon"></i>
+          <span id="auth-nav-label">Login</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="relative z-10 max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+
+    <div class="text-center mb-8 sm:mb-12">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-900/40 border border-purple-500/30 text-xs sm:text-sm text-purple-200 mb-4 animate-bounce">
+        <i class="fa-solid fa-moon text-amber-300"></i>
+        <span id="hero-badge">ඔබේ උපන් දිනය තුළ සැඟවුණු අනාගතය අදම සොයාගන්න</span>
+      </div>
+      <h2 id="hero-title" class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4">
+        ඔබේ <span class="gold-gradient-text">දෛවය හා අනාගතය</span> විවර කරගන්න
+      </h2>
+      <p id="hero-desc" class="max-w-2xl mx-auto text-sm sm:text-base text-purple-200/80">
+        නක්ෂත්‍රය, සංඛ්‍යා විද්‍යාව (Numerology) සහ විශ්ව ශක්තීන් උපයෝගී කරගෙන ඔබේ ආදරය, ධනය, රැකියාව හා ඉදිරි සන්ධිස්ථාන විග්‍රහ කරගන්න.
+      </p>
+    </div>
+
+    <section id="input-section" class="max-w-3xl mx-auto glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl border border-purple-500/30">
+      
+      <div id="validation-error-box" class="hidden mb-6 p-4 rounded-2xl bg-rose-950/90 border-2 border-rose-500 text-rose-200 text-sm shadow-xl flex items-start gap-3">
+        <i class="fa-solid fa-triangle-exclamation text-rose-400 text-2xl mt-0.5 animate-bounce"></i>
+        <div>
+          <h5 class="font-bold text-rose-300 text-base" id="error-title">කරුණාකර අවශ්‍ය තොරතුරු නිවැරදිව පුරවන්න!</h5>
+          <p class="text-xs text-rose-200 mt-1" id="error-desc">ඔබේ නම සහ නිවැරදි උපන් දිනය ඇතුළත් නොකර අනාගතය පරීක්ෂා කළ නොහැක.</p>
+        </div>
+      </div>
+
+      <form id="destiny-form" onsubmit="event.preventDefault(); calculateDestiny();" class="space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          
+          <div>
+            <label for="userName" class="block text-sm font-semibold text-purple-200 mb-2">
+              <i class="fa-solid fa-user-astronaut mr-2 text-amber-400"></i><span id="label-name">ඔබේ නම</span>
+            </label>
+            <input 
+              type="text" 
+              id="userName" 
+              required
+              placeholder="උදා: කසුන් පෙරේරා" 
+              class="w-full px-4 py-3 rounded-2xl bg-cosmic-900/80 border border-purple-700/60 text-white placeholder-purple-400/50 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition"
+            />
+          </div>
+
+          <div>
+            <label for="birthDate" class="block text-sm font-semibold text-purple-200 mb-2">
+              <i class="fa-solid fa-cake-candles mr-2 text-amber-400"></i><span id="label-dob">උපන් දිනය (Birth Date)</span>
+            </label>
+            <input 
+              type="date" 
+              id="birthDate" 
+              required
+              class="w-full px-4 py-3 rounded-2xl bg-cosmic-900/80 border border-purple-700/60 text-white focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition"
+            />
+          </div>
+
+          <div>
+            <label for="birthTime" class="block text-sm font-semibold text-purple-200 mb-2">
+              <i class="fa-regular fa-clock mr-2 text-amber-400"></i><span id="label-time">උපන් වේලාව (දන්නේ නම් පමණක්)</span>
+            </label>
+            <input 
+              type="time" 
+              id="birthTime" 
+              class="w-full px-4 py-3 rounded-2xl bg-cosmic-900/80 border border-purple-700/60 text-white focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition"
+            />
+          </div>
+
+          <div>
+            <label for="gender" class="block text-sm font-semibold text-purple-200 mb-2">
+              <i class="fa-solid fa-venus-mars mr-2 text-amber-400"></i><span id="label-gender">ස්ත්‍රී / පුරුෂ භාවය</span>
+            </label>
+            <select 
+              id="gender" 
+              class="w-full px-4 py-3 rounded-2xl bg-cosmic-900/80 border border-purple-700/60 text-white focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition"
+            >
+              <option value="male">පුරුෂ (Male)</option>
+              <option value="female">ස්ත්‍රී (Female)</option>
+              <option value="other">විශේෂ (Other / Divine)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="border-t border-b border-purple-800/60 py-6 my-4">
+          <div class="text-center mb-5">
+            <span class="px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-bold uppercase tracking-wider">
+              <i class="fa-solid fa-fingerprint mr-1"></i> Bio-Cosmic Scanners (අත්‍යවශ්‍ය නොවේ - සුපිරි නිරවද්‍යතාව සඳහා)
+            </span>
+            <h4 class="text-base sm:text-lg font-bold text-purple-200 mt-2" id="label-scanners-title">
+              අත් රේඛා සහ මුහුණේ තේජස (Aura) ස්කෑන් කරන්න
+            </h4>
+            <p class="text-xs text-purple-400">ඔබේ අත්ල හෝ මුහුණ ස්කෑන් කර වඩාත් නිවැරදි සාමුද්‍රික අනාවැකි ලබාගන්න</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            
+            <div class="p-4 rounded-2xl bg-cosmic-900/80 border border-purple-600/40 relative overflow-hidden group hover:border-amber-400/60 transition">
+              <input type="file" id="palm-camera-input" accept="image/*" capture="environment" class="hidden" onchange="handlePalmPhoto(event)">
+
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-hand text-amber-400 text-xl"></i>
+                  <span class="text-sm font-bold text-white" id="palm-card-title">අත් රේඛා ස්කෑනරය</span>
+                </div>
+                <span id="palm-status-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-purple-900/80 text-purple-300 border border-purple-700">අවශ්‍යයි</span>
+              </div>
+
+              <div class="mb-3 space-y-2">
+                <div class="flex items-center justify-between bg-purple-950/60 p-1.5 rounded-xl border border-purple-800/60">
+                  <span class="text-[11px] font-semibold text-purple-300 pl-1" id="palm-select-label">
+                    <i class="fa-solid fa-arrows-left-right text-amber-400 mr-1"></i>අත තෝරන්න:
+                  </span>
+                  <div class="inline-flex rounded-lg bg-cosmic-900/90 p-0.5 text-[11px]">
+                    <button type="button" id="btn-palm-right" onclick="selectPalmSide('right')" class="px-2.5 py-1 rounded-md font-bold transition bg-gradient-to-r from-amber-500 to-purple-600 text-white shadow">
+                      දකුණු අත (Right)
+                    </button>
+                    <button type="button" id="btn-palm-left" onclick="selectPalmSide('left')" class="px-2.5 py-1 rounded-md font-medium text-purple-300 hover:text-white transition">
+                      වම් අත (Left)
+                    </button>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between bg-purple-950/40 px-2.5 py-1.5 rounded-xl border border-purple-800/40 text-[11px]">
+                  <span class="text-purple-300 flex items-center gap-1.5">
+                    <i class="fa-solid fa-video text-amber-400"></i>
+                    <span id="lbl-palm-cam-title">කැමරා කාචය:</span>
+                  </span>
+                  <button type="button" onclick="togglePalmCameraMode()" class="px-2.5 py-1 rounded-lg bg-purple-900/90 hover:bg-purple-800 text-amber-300 border border-purple-600/70 font-semibold flex items-center gap-1.5 transition active:scale-95">
+                    <i class="fa-solid fa-camera-rotate text-[10px]"></i>
+                    <span id="lbl-palm-cam-mode">පසුපස කැමරාව (Back Cam)</span>
+                  </button>
+                </div>
+              </div>
+
+              <div id="palm-scan-area" class="relative h-44 rounded-xl bg-purple-950/40 border-2 border-dashed border-purple-600/60 flex flex-col items-center justify-center p-3 text-center overflow-hidden">
+                <div id="palm-laser" class="hidden absolute left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 shadow-[0_0_15px_#ffd166] z-30 animate-laser"></div>
+                
+                <video id="palm-webcam-video" autoplay playsinline muted class="hidden absolute inset-0 w-full h-full object-cover rounded-xl z-10 filter contrast-125 brightness-95"></video>
+                <img id="palm-captured-img" class="hidden absolute inset-0 w-full h-full object-cover rounded-xl z-10 filter contrast-125" alt="Scanned Palm">
+
+                <div id="palm-guide" class="hidden absolute inset-0 z-20 pointer-events-none flex items-center justify-center opacity-40">
+                  <i id="palm-guide-icon" class="fa-regular fa-hand text-8xl text-amber-300 animate-pulse"></i>
+                </div>
+
+                <div id="palm-placeholder" class="z-10 flex flex-col items-center pointer-events-none">
+                  <i id="palm-icon" class="fa-regular fa-hand text-5xl text-purple-400/80 mb-2"></i>
+                  <p id="palm-prompt-text" class="text-xs text-purple-200 font-medium">දකුණු අත්ල කැමරාවට පෙන්වා ස්කෑන් කරන්න</p>
+                  <p class="text-[10px] text-purple-400 mt-0.5" id="palm-hand-subtext">ස්වෝත්සාහය සහ වර්තමාන කර්මය විග්‍රහ කෙරේ</p>
+                </div>
+
+                <div id="palm-scanned-preview" class="hidden z-25 text-xs text-amber-300 font-semibold flex items-center gap-2 bg-cosmic-900/90 px-3.5 py-2 rounded-full border border-amber-400/60 shadow-lg">
+                  <i class="fa-solid fa-circle-check text-green-400 text-lg"></i>
+                  <span id="palm-scanned-confirm-text">දකුණු අත් රේඛා සාර්ථකව හඳුනාගන්නා ලදී</span>
+                </div>
+              </div>
+
+              <div class="mt-3">
+                <button type="button" onclick="triggerPalmScan(event)" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-300 text-slate-950 text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-amber-500/25 border border-amber-300/60 transition active:scale-95">
+                  <i class="fa-solid fa-camera text-slate-900"></i>
+                  <span id="btn-palm-scan-text">📷 කැමරාවෙන් අත්ල ස්කෑන් කරන්න</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-cosmic-900/80 border border-purple-600/40 relative overflow-hidden group hover:border-cyan-400/60 transition">
+              <input type="file" id="face-camera-input" accept="image/*" capture="environment" class="hidden" onchange="handleFacePhoto(event)">
+
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-face-smile-beam text-cyan-400 text-xl"></i>
+                  <span class="text-sm font-bold text-white" id="face-card-title">මුහුණු තේජස් ස්කෑනරය</span>
+                </div>
+                <span id="face-status-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-purple-900/80 text-purple-300 border border-purple-700">අවශ්‍යයි</span>
+              </div>
+
+              <div id="face-scan-area" class="relative h-44 rounded-xl bg-purple-950/40 border-2 border-dashed border-purple-600/60 flex flex-col items-center justify-center p-3 text-center overflow-hidden">
+                <div id="face-laser" class="hidden absolute left-0 right-0 h-1.5 bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-500 shadow-[0_0_15px_#06d6a0] z-20 animate-laser"></div>
+                
+                <video id="webcam-video" autoplay playsinline muted class="hidden absolute inset-0 w-full h-full object-cover rounded-xl z-10 filter contrast-125 brightness-95"></video>
+                <img id="face-captured-img" class="hidden absolute inset-0 w-full h-full object-cover rounded-xl z-10 filter contrast-125" alt="Scanned Face">
+
+                <div id="face-placeholder" class="z-10 flex flex-col items-center pointer-events-none">
+                  <i id="face-icon" class="fa-solid fa-camera text-4xl text-purple-400/80 mb-2"></i>
+                  <p id="face-prompt-text" class="text-xs text-purple-200 font-medium">කැමරාවෙන් මුහුණ ස්කෑන් කරන්න</p>
+                  <p class="text-[10px] text-purple-400 mt-0.5">නළල, දෙනෙත් හා මුහුණේ කාන්තිය (Aura) මැනීම</p>
+                </div>
+
+                <div id="face-scanned-preview" class="hidden z-20 text-xs text-cyan-300 font-semibold flex items-center gap-2 bg-cosmic-900/90 px-3.5 py-2 rounded-full border border-cyan-400/60 shadow-lg">
+                  <i class="fa-solid fa-circle-check text-green-400 text-lg"></i>
+                  <span>මුහුණේ ශක්ති වලල්ල (Aura) තහවුරු විය</span>
+                </div>
+              </div>
+
+              <div class="mt-3">
+                <button type="button" onclick="triggerFaceScan(event)" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-500 hover:from-cyan-400 hover:to-teal-300 text-slate-950 text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 border border-cyan-300/60 transition active:scale-95">
+                  <i class="fa-solid fa-camera text-slate-900"></i>
+                  <span id="btn-face-scan-text">📷 කැමරාවෙන් මුහුණ ස්කෑන් කරන්න</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-purple-200 mb-2">
+            <i class="fa-solid fa-compass mr-2 text-amber-400"></i><span id="label-focus">ඔබට වඩාත් දැනගැනීමට අවශ්‍ය අංශය:</span>
+          </label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            <label class="cursor-pointer">
+              <input type="radio" name="focusArea" value="all" checked class="peer sr-only">
+              <div class="p-3 rounded-2xl border border-purple-800 bg-cosmic-900/60 peer-checked:border-amber-400 peer-checked:bg-purple-900/50 hover:bg-purple-900/30 transition">
+                <i class="fa-solid fa-star text-amber-300 block text-lg mb-1"></i>
+                <span class="text-xs font-semibold" id="opt-all">සම්පූර්ණ අනාගතය</span>
+              </div>
+            </label>
+
+            <label class="cursor-pointer">
+              <input type="radio" name="focusArea" value="career" class="peer sr-only">
+              <div class="p-3 rounded-2xl border border-purple-800 bg-cosmic-900/60 peer-checked:border-amber-400 peer-checked:bg-purple-900/50 hover:bg-purple-900/30 transition">
+                <i class="fa-solid fa-coins text-amber-400 block text-lg mb-1"></i>
+                <span class="text-xs font-semibold" id="opt-wealth">ධනය හා රැකියාව</span>
+              </div>
+            </label>
+
+            <label class="cursor-pointer">
+              <input type="radio" name="focusArea" value="love" class="peer sr-only">
+              <div class="p-3 rounded-2xl border border-purple-800 bg-cosmic-900/60 peer-checked:border-amber-400 peer-checked:bg-purple-900/50 hover:bg-purple-900/30 transition">
+                <i class="fa-solid fa-heart text-pink-400 block text-lg mb-1"></i>
+                <span class="text-xs font-semibold" id="opt-love">ආදරය හා විවාහය</span>
+              </div>
+            </label>
+
+            <label class="cursor-pointer">
+              <input type="radio" name="focusArea" value="future" class="peer sr-only">
+              <div class="p-3 rounded-2xl border border-purple-800 bg-cosmic-900/60 peer-checked:border-amber-400 peer-checked:bg-purple-900/50 hover:bg-purple-900/30 transition">
+                <i class="fa-solid fa-plane-departure text-cyan-400 block text-lg mb-1"></i>
+                <span class="text-xs font-semibold" id="opt-travel">විදේශ ගමන් & වාසනාව</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="pt-4 text-center">
+          <button 
+            type="submit" 
+            class="w-full sm:w-auto px-10 py-4 rounded-full bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 text-white font-extrabold text-base sm:text-lg shadow-xl shadow-purple-900/60 hover:shadow-amber-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center mx-auto gap-3 border border-amber-300/40"
+          >
+            <i class="fa-solid fa-eye text-amber-200 text-xl"></i>
+            <span id="btn-submit-text">අනාගත අනාවැකිය විවර කරන්න (Predict My Future)</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <div id="loading-overlay" class="hidden fixed inset-0 z-50 bg-cosmic-950/90 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center">
+      <div class="relative w-36 h-36 mb-6">
+        <div class="absolute inset-0 rounded-full border-4 border-amber-400/20 border-t-amber-400 animate-spin"></div>
+        <div class="absolute inset-3 rounded-full border-4 border-purple-500/20 border-b-purple-500 animate-spin-slow"></div>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <i class="fa-solid fa-crystal-ball text-4xl text-amber-300 animate-pulse"></i>
+        </div>
+      </div>
+      <h3 id="loading-status" class="text-2xl font-bold gold-gradient-text mb-2">ග්‍රහ පිහිටීම් හා ජන්ම අංක ගණනය වෙමින් පවතී...</h3>
+      <p id="loading-sub" class="text-purple-300 text-sm max-w-md">විශ්ව ශක්තිය සහ දෛව චක්‍රය විශ්ලේෂණය කෙරේ. මොහොතක් රැඳී සිටින්න...</p>
+    </div>
+
+    <section id="results-dashboard" class="hidden space-y-8 mt-6">
+      
+      <div class="flex flex-wrap items-center justify-between gap-4 glass-panel p-4 rounded-2xl">
+        <button onclick="resetApp()" class="px-4 py-2 rounded-xl bg-purple-900/70 hover:bg-purple-800 text-purple-200 text-sm flex items-center gap-2 transition">
+          <i class="fa-solid fa-arrow-left"></i> <span id="btn-back">නැවත පරීක්ෂා කරන්න</span>
+        </button>
+        
+        <div class="flex items-center gap-3">
+          <button onclick="copyDestinyReport()" class="px-4 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-sm font-semibold flex items-center gap-2 transition">
+            <i class="fa-solid fa-copy"></i> <span id="btn-copy">වාර්තාව පිටපත් කරගන්න (Copy)</span>
+          </button>
+          <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-600 text-white text-sm font-semibold flex items-center gap-2 transition">
+            <i class="fa-solid fa-print"></i> <span id="btn-print">මුද්‍රණය (Print)</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="glass-panel rounded-3xl p-6 sm:p-8 relative overflow-hidden border border-amber-400/30">
+        <div class="absolute -right-12 -top-12 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+          
+          <div class="md:col-span-2 space-y-3">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-bold">
+              <i class="fa-solid fa-certificate"></i> <span id="res-badge">විශ්වීය දෛව සටහන • Official Destiny Profile</span>
+            </div>
+            <h2 id="res-greeting" class="text-2xl sm:text-4xl font-extrabold text-white"></h2>
+            <p id="res-dob-display" class="text-purple-300 text-sm sm:text-base"></p>
+            <div class="flex flex-wrap gap-2 pt-2">
+              <span id="badge-zodiac" class="px-3 py-1 rounded-xl bg-purple-900/80 border border-purple-500/40 text-xs text-amber-300"></span>
+              <span id="badge-element" class="px-3 py-1 rounded-xl bg-purple-900/80 border border-purple-500/40 text-xs text-cyan-300"></span>
+              <span id="badge-lifepath" class="px-3 py-1 rounded-xl bg-purple-900/80 border border-purple-500/40 text-xs text-pink-300"></span>
+            </div>
+          </div>
+
+          <div class="flex flex-col items-center justify-center p-4 rounded-2xl bg-cosmic-900/70 border border-purple-500/30 text-center">
+            <div id="zodiac-icon-container" class="w-20 h-20 rounded-full bg-gradient-to-tr from-amber-500/30 to-purple-600/30 flex items-center justify-center text-4xl text-amber-400 mb-2 animate-float">
+              <i id="zodiac-icon" class="fa-solid fa-sun"></i>
+            </div>
+            <h4 id="zodiac-name-display" class="text-xl font-black text-amber-300 font-mystic"></h4>
+            <p id="zodiac-ruler" class="text-xs text-purple-300"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="glass-card rounded-2xl p-4 text-center">
+          <p class="text-xs text-purple-300" id="stat-age-label">සම්පූර්ණ වයස</p>
+          <h3 id="stat-age" class="text-lg sm:text-2xl font-bold text-white mt-1"></h3>
+          <span class="text-[10px] text-amber-400/80" id="stat-age-sub">ජීවත් වූ කාලය</span>
+        </div>
+        <div class="glass-card rounded-2xl p-4 text-center">
+          <p class="text-xs text-purple-300" id="stat-days-label">ගත වූ දින ගණන</p>
+          <h3 id="stat-days" class="text-lg sm:text-2xl font-bold text-cyan-300 mt-1"></h3>
+          <span class="text-[10px] text-purple-300/80" id="stat-days-sub">Days on Earth</span>
+        </div>
+        <div class="glass-card rounded-2xl p-4 text-center">
+          <p class="text-xs text-purple-300" id="stat-next-label">මීළඟ උපන් දිනයට</p>
+          <h3 id="stat-next" class="text-lg sm:text-2xl font-bold text-pink-400 mt-1"></h3>
+          <span class="text-[10px] text-purple-300/80" id="stat-next-sub">Days remaining</span>
+        </div>
+        <div class="glass-card rounded-2xl p-4 text-center">
+          <p class="text-xs text-purple-300" id="stat-path-label">ජන්ම අංකය</p>
+          <h3 id="stat-path" class="text-lg sm:text-2xl font-bold text-amber-300 mt-1"></h3>
+          <span class="text-[10px] text-purple-300/80" id="stat-path-sub">Life Path Number</span>
+        </div>
+      </div>
+
+      <div id="biometric-results-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <div class="glass-card rounded-3xl p-6 border-l-4 border-yellow-400 space-y-3 relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-lg">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-lg text-white" id="title-res-palm">අත් රේඛා සාමුද්‍රික පරීක්ෂාව</h3>
+                <p class="text-xs text-purple-300" id="sub-res-palm">Palmistry Biometric Lines (දකුණු අත)</p>
+              </div>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-yellow-400/20 text-yellow-300 border border-yellow-500/30 font-semibold" id="val-palm-quality">ප්‍රබලයි (Strong)</span>
+          </div>
+
+          <div class="space-y-2 pt-1 text-xs sm:text-sm text-purple-200 leading-relaxed">
+            <div class="p-3 rounded-xl bg-cosmic-900/60 border border-purple-800/60 flex items-start gap-2.5">
+              <i class="fa-solid fa-wave-square text-amber-400 mt-1"></i>
+              <div>
+                <strong class="text-amber-300" id="lbl-life-line">ජීවන රේඛාව (Life Line): </strong>
+                <span id="desc-life-line">දීර්ඝායුෂ සහ නිරෝගී ශරීර සුවය විදහා දක්වන ගැඹුරු, පැහැදිලි රේඛාවකි.</span>
+              </div>
+            </div>
+            <div class="p-3 rounded-xl bg-cosmic-900/60 border border-purple-800/60 flex items-start gap-2.5">
+              <i class="fa-solid fa-brain text-cyan-400 mt-1"></i>
+              <div>
+                <strong class="text-cyan-300" id="lbl-head-line">ශීර්ෂ රේඛාව (Head Line): </strong>
+                <span id="desc-head-line">උසස් බුද්ධියක් හා නිර්මාණශීලී තීරණ ගැනීමේ තියුණු හැකියාවක් පෙන්නුම් කරයි.</span>
+              </div>
+            </div>
+            <div class="p-3 rounded-xl bg-cosmic-900/60 border border-purple-800/60 flex items-start gap-2.5">
+              <i class="fa-solid fa-heart-pulse text-pink-400 mt-1"></i>
+              <div>
+                <strong class="text-pink-300" id="lbl-heart-line">හෘද රේඛාව (Heart Line): </strong>
+                <span id="desc-heart-line">අන්‍යන්ට උදව් කරන කරුණාවන්ත සිතක් හා විශ්වාසවන්ත ප්‍රේම සබඳතාවන් හිමිය.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 border-l-4 border-cyan-400 space-y-3 relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-lg">
+                <i class="fa-solid fa-wand-magic"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-lg text-white" id="title-res-face">මුහුණේ තේජස හා ශක්ති වලල්ල</h3>
+                <p class="text-xs text-purple-300">Facial Aura & Physiognomy</p>
+              </div>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-cyan-400/20 text-cyan-300 border border-cyan-500/30 font-semibold" id="val-face-aura">රන්වන් තේජස (Golden Aura)</span>
+          </div>
+
+          <div class="space-y-2 pt-1 text-xs sm:text-sm text-purple-200 leading-relaxed">
+            <div class="p-3 rounded-xl bg-cosmic-900/60 border border-purple-800/60 flex items-start gap-2.5">
+              <i class="fa-solid fa-sun text-yellow-400 mt-1"></i>
+              <div>
+                <strong class="text-yellow-300" id="lbl-forehead">නළල් තලය (Forehead Radiance): </strong>
+                <span id="desc-forehead">රාජ්‍ය හෝ ආයතනික ගෞරවය, කීර්තිය ලැබීමට සුදුසු වාසනාවන්ත පිහිටීමකි.</span>
+              </div>
+            </div>
+            <div class="p-3 rounded-xl bg-cosmic-900/60 border border-purple-800/60 flex items-start gap-2.5">
+              <i class="fa-solid fa-eye text-indigo-400 mt-1"></i>
+              <div>
+                <strong class="text-indigo-300" id="lbl-eyes">දෙනෙත් ආලෝකය (Eye Magnetism): </strong>
+                <span id="desc-eyes">මිනිසුන්ව ආකර්ෂණය කර ගැනීමේ සහ විශ්වාසය දිනාගැනීමේ සුවිශේෂී ප්‍රභාවයක් ඇත.</span>
+              </div>
+            </div>
+            <div class="p-3 rounded-xl bg-cosmic-900/60 border border-purple-800/60 flex items-start gap-2.5">
+              <i class="fa-solid fa-shield-halved text-emerald-400 mt-1"></i>
+              <div>
+                <strong class="text-emerald-300" id="lbl-aura-type">ශක්ති වලල්ල (Vibrational Aura): </strong>
+                <span id="desc-aura-type">අනතුරු සහ ව්‍යසන වලින් ඔබව නිරතුරුව මුදවාලන ආරක්ෂිත දිව්‍යමය ශක්තියකි.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <div class="glass-card rounded-3xl p-6 border-l-4 border-amber-400 space-y-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-coins"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-lg text-white" id="title-pred-wealth">ධනය, ව්‍යාපාර හා රැකියාව</h3>
+              <p class="text-xs text-purple-300">Financial & Professional Destiny</p>
+            </div>
+          </div>
+          <p id="desc-pred-wealth" class="text-sm text-purple-100/90 leading-relaxed"></p>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 border-l-4 border-pink-400 space-y-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-heart"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-lg text-white" id="title-pred-love">ආදරය, විවාහය හා සබඳතා</h3>
+              <p class="text-xs text-purple-300">Love, Harmony & Relationships</p>
+            </div>
+          </div>
+          <p id="desc-pred-love" class="text-sm text-purple-100/90 leading-relaxed"></p>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 border-l-4 border-emerald-400 space-y-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-shield-heart"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-lg text-white" id="title-pred-health">සෞඛ්‍යය හා ජීව ශක්තිය</h3>
+              <p class="text-xs text-purple-300">Vitality, Mind & Energy</p>
+            </div>
+          </div>
+          <p id="desc-pred-health" class="text-sm text-purple-100/90 leading-relaxed"></p>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 border-l-4 border-indigo-400 space-y-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-hourglass-half"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-lg text-white" id="title-pred-destiny">ජීවිතයේ හැරවුම් ලක්ෂ්‍ය</h3>
+              <p class="text-xs text-purple-300">Crucial Milestone Years</p>
+            </div>
+          </div>
+          <p id="desc-pred-destiny" class="text-sm text-purple-100/90 leading-relaxed"></p>
+        </div>
+      </div>
+
+      <div class="glass-panel rounded-3xl p-6 sm:p-8 border border-purple-500/40">
+        <h3 class="text-xl font-bold text-amber-300 mb-6 text-center flex items-center justify-center gap-2">
+          <i class="fa-solid fa-clover text-amber-400"></i>
+          <span id="title-lucky-box">ඔබට හිමි විශ්වීය වාසනාවන්ත කරුණු</span>
+        </h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+          <div class="p-4 rounded-2xl bg-cosmic-900/60 border border-purple-800">
+            <i class="fa-solid fa-dice text-amber-400 text-xl mb-2"></i>
+            <p class="text-xs text-purple-300" id="lucky-num-label">වාසනාවන්ත අංක</p>
+            <h4 id="val-lucky-num" class="text-lg font-bold text-white mt-1"></h4>
+          </div>
+          <div class="p-4 rounded-2xl bg-cosmic-900/60 border border-purple-800">
+            <i class="fa-solid fa-palette text-pink-400 text-xl mb-2"></i>
+            <p class="text-xs text-purple-300" id="lucky-col-label">වාසනාවන්ත වර්ණය</p>
+            <h4 id="val-lucky-col" class="text-lg font-bold text-white mt-1"></h4>
+          </div>
+          <div class="p-4 rounded-2xl bg-cosmic-900/60 border border-purple-800">
+            <i class="fa-solid fa-calendar-check text-cyan-400 text-xl mb-2"></i>
+            <p class="text-xs text-purple-300" id="lucky-day-label">සුබ දිනයන්</p>
+            <h4 id="val-lucky-day" class="text-lg font-bold text-white mt-1"></h4>
+          </div>
+          <div class="p-4 rounded-2xl bg-cosmic-900/60 border border-purple-800">
+            <i class="fa-solid fa-gem text-purple-400 text-xl mb-2"></i>
+            <p class="text-xs text-purple-300" id="lucky-gem-label">සුබ මැණික / ලෝහය</p>
+            <h4 id="val-lucky-gem" class="text-lg font-bold text-white mt-1"></h4>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-panel rounded-3xl p-6 sm:p-8 text-center border border-amber-400/20">
+        <h3 class="text-xl sm:text-2xl font-bold gold-gradient-text mb-2" id="title-crystal-section">
+          අධි-මානසික Crystal Ball වෙතින් ක්ෂණික පිළිතුරක් ලබාගන්න
+        </h3>
+        <p class="text-purple-300 text-xs sm:text-sm max-w-xl mx-auto mb-6" id="desc-crystal-section">
+          ඔබට සිතට වදදෙන ඕනෑම ප්‍රශ්නයක් සිතින් සිතා, පහත ඇති මායාකාරී බෝලය ස්පර්ශ කරන්න.
+        </p>
+        
+        <div class="max-w-md mx-auto mb-6">
+          <input 
+            type="text" 
+            id="crystal-question" 
+            placeholder="ඔබේ ප්‍රශ්නය මෙතැන ලියන්න (උදා: මාගේ විභාගය සාර්ථක වේවිද?)" 
+            class="w-full px-4 py-3 rounded-2xl bg-cosmic-900/90 border border-purple-700/60 text-white placeholder-purple-400/50 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+          />
+        </div>
+
+        <div class="flex flex-col items-center justify-center">
+          <button 
+            type="button" 
+            onclick="consultCrystalBall()" 
+            class="group relative w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-tr from-purple-800 via-indigo-900 to-amber-600 p-1 flex items-center justify-center focus:outline-none shadow-2xl hover:scale-105 active:scale-95 transition-all duration-500"
+          >
+            <div class="w-full h-full rounded-full bg-gradient-to-b from-purple-900/80 to-black orb-glow flex flex-col items-center justify-center p-4">
+              <i class="fa-solid fa-eye text-amber-300 text-2xl group-hover:scale-125 transition duration-300"></i>
+              <span class="text-[10px] sm:text-xs font-bold text-amber-200 mt-1 uppercase tracking-wider" id="crystal-btn-tap">ස්පර්ශ කරන්න</span>
+            </div>
+          </button>
+          
+          <div id="crystal-answer-box" class="mt-6 p-4 rounded-2xl bg-purple-950/70 border border-amber-400/40 max-w-lg w-full min-h-[70px] flex items-center justify-center transition-all duration-300">
+            <p id="crystal-oracle-text" class="text-sm sm:text-base font-semibold text-amber-300">
+              ප්‍රශ්නයක් ඇතුළත් කර Crystal Ball එක මත ක්ලික් කරන්න...
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-32 opacity-0 transition-all duration-300 bg-purple-950 border border-amber-400 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
+      <i id="toast-icon" class="fa-solid fa-circle-check text-amber-400"></i>
+      <span id="toast-msg" class="text-sm font-medium"></span>
+    </div>
+
+  </main>
+
+  <div id="auth-modal" class="hidden fixed inset-0 z-50 bg-cosmic-950/95 backdrop-blur-xl flex items-center justify-center p-4 overflow-hidden">
+    
+    <div id="login-planet-wrapper" class="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+      <canvas id="login-planet-canvas" class="w-full h-full block"></canvas>
+      <div class="absolute inset-0 bg-radial-gradient from-transparent via-cosmic-950/40 to-cosmic-950 pointer-events-none"></div>
+    </div>
+
+    <div class="absolute pointer-events-none w-[340px] sm:w-[440px] h-[340px] sm:h-[440px] rounded-full border border-dashed border-amber-400/30 magic-rune-ring flex items-center justify-center -z-5">
+      <div class="w-[85%] h-[85%] rounded-full border border-dotted border-purple-400/40 flex items-center justify-center">
+        <div class="w-[75%] h-[75%] rounded-full border border-cyan-400/30"></div>
+      </div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-sm rounded-3xl glass-panel p-6 sm:p-8 border-2 border-amber-400/60 magic-portal-box text-center">
+      
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 via-purple-600 to-indigo-600 p-0.5 mx-auto mb-4 shadow-xl shadow-amber-500/40 flex items-center justify-center ring-4 ring-purple-500/20">
+        <div class="w-full h-full bg-cosmic-900 rounded-2xl flex items-center justify-center">
+          <i id="modal-lock-icon" class="fa-solid fa-lock text-2xl text-amber-300 animate-pulse"></i>
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-bold uppercase tracking-wider border border-amber-400/40 mb-2">
+          <i class="fa-solid fa-shield-halved"></i> Cosmic Security Gate
+        </span>
+        <h3 class="text-xl sm:text-2xl font-black text-white gold-gradient-text" id="pwd-modal-title">
+          ගිණුමට පිවිසෙන්න (Login)
+        </h3>
+        <p class="text-xs text-purple-300 mt-1" id="pwd-modal-desc">
+          ඔබගේ WhatsApp අංකය සහ රහස් මුරපදය ඇතුළත් කරන්න
+        </p>
+      </div>
+
+      <div id="pwd-error-box" class="hidden mb-4 p-3 rounded-xl bg-rose-950/90 border border-rose-500 text-rose-200 text-xs font-semibold flex items-center gap-2 text-left animate-bounce">
+        <i class="fa-solid fa-circle-exclamation text-rose-400 text-base flex-shrink-0"></i>
+        <span id="pwd-error-text">මුරපදය වැරදියි! නිවැරදි මුරපදය ඇතුළත් කරන්න.</span>
+      </div>
+
+      <form id="password-gate-form" onsubmit="event.preventDefault(); handlePasswordSubmit();" class="space-y-4 text-left">
+        
+        <div>
+          <label for="auth-input-phone" class="block text-xs font-semibold text-purple-200 mb-1.5" id="lbl-login-phone">
+            <i class="fa-brands fa-whatsapp text-emerald-400 mr-1"></i>WhatsApp අංකය (Phone Number)
+          </label>
+          <input 
+            type="tel" 
+            id="auth-input-phone" 
+            required 
+            placeholder="07XXXXXXXX" 
+            class="w-full px-4 py-3 rounded-2xl bg-cosmic-900 border border-purple-600 text-white text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-400/30 outline-none transition placeholder-purple-500"
+          />
+        </div>
+
+        <div>
+          <label for="auth-input-password" class="block text-xs font-semibold text-purple-200 mb-1.5" id="lbl-login-pwd">
+            <i class="fa-solid fa-key text-amber-400 mr-1"></i>රහස් මුරපදය (Secret Password)
+          </label>
+          <div class="relative">
+            <input 
+              type="password" 
+              id="auth-input-password" 
+              maxlength="10" 
+              required 
+              placeholder="••••" 
+              class="w-full px-4 py-3 rounded-2xl bg-cosmic-900 border border-purple-600 text-center text-white text-xl font-black tracking-widest focus:border-amber-400 focus:ring-2 focus:ring-amber-400/30 outline-none transition placeholder-purple-600"
+            />
+            <button 
+              type="button" 
+              onclick="togglePasswordVisibility()" 
+              class="absolute right-3.5 top-1/2 -translate-y-1/2 text-purple-400 hover:text-amber-300 transition text-sm p-1"
+              title="Show/Hide Password"
+            >
+              <i id="pwd-eye-icon" class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button 
+          type="submit" 
+          id="btn-unlock-app" 
+          class="w-full py-3.5 mt-2 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-300 text-slate-950 text-sm font-black tracking-wider uppercase shadow-xl shadow-amber-500/30 active:scale-95 transition flex items-center justify-center gap-2 border border-amber-300"
+        >
+          <i class="fa-solid fa-right-to-bracket text-slate-900"></i>
+          <span id="btn-unlock-text">පිවිසෙන්න (Login to App)</span>
+        </button>
+      </form>
+
+      <div class="mt-4 pt-3 border-t border-purple-900/60 text-[11px] text-purple-400">
+        Created by Shehan Kavishka • WhatsApp: 0703347096
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="relative z-10 border-t border-purple-950 bg-cosmic-900/90 text-center py-8 px-4 text-xs text-purple-400">
+    <div class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500/20 via-yellow-400/30 to-amber-600/20 border-2 border-amber-400/70 shadow-xl shadow-amber-500/20 mb-4">
+      <i class="fa-solid fa-crown text-amber-400 text-lg sm:text-xl animate-pulse"></i>
+      <span class="text-amber-300 font-black text-base sm:text-xl tracking-wider uppercase drop-shadow-[0_2px_8px_rgba(255,209,102,0.6)]">
+        Created by Shehan Kavishka
+      </span>
+    </div>
+    
+    <div class="flex flex-wrap items-center justify-center gap-4 my-3">
+      <a href="https://wa.me/94703347096" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm sm:text-base font-extrabold shadow-xl shadow-emerald-900/50 hover:scale-105 active:scale-95 transition border border-emerald-300/40">
+        <i class="fa-brands fa-whatsapp text-white text-xl"></i> WhatsApp: 0703347096
+      </a>
+      <a href="mailto:shehank931@gmail.com" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm sm:text-base font-extrabold shadow-xl shadow-indigo-950/60 hover:scale-105 active:scale-95 transition border border-blue-300/50">
+        <i class="fa-solid fa-envelope text-white text-xl"></i> Gmail: shehank931@gmail.com
+      </a>
+    </div>
+
+    <p>© 2026 Cosmic Destiny Predictor • සිංහල සංඛ්‍යා විද්‍යා හා ජ්‍යොතිෂ ඇල්ගොරිතම පද්ධතියකි.</p>
+    <p class="mt-1 text-purple-500">ජීවිතයේ සාර්ථකත්වයට ඔබේ උත්සාහය සහ ධර්මානුකූල හැසිරීම ප්‍රධාන වේ.</p>
+  </footer>
+
+  <script>
+    let currentLang = 'si';
+    let audioEnabled = false;
+    let audioCtx = null;
+    let currentReport = null;
+
+    let userWhatsAppPhone = '';
+    let selectedHand = 'right';
+    let palmFacingMode = 'environment';
+    let isPalmScanning = false;
+    let isFaceScanning = false;
+    let isPalmScanned = false;
+    let isFaceScanned = false;
+
+    let palmMediaStream = null;
+    let mediaStream = null;
+
+    function createMagicSparkles(e) {
+      const colors = ['#ffd166', '#c77dff', '#06d6a0', '#ffffff', '#ff70a6'];
+      for (let i = 0; i < 6; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'magic-sparkle-dot';
+        const size = Math.random() * 6 + 3;
+        dot.style.width = `${size}px`;
+        dot.style.height = `${size}px`;
+        dot.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        dot.style.boxShadow = `0 0 ${size * 2}px ${dot.style.backgroundColor}`;
+        dot.style.left = `${e.clientX}px`;
+        dot.style.top = `${e.clientY}px`;
+
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.random() * 45 + 15;
+        dot.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
+        dot.style.setProperty('--ty', `${Math.sin(angle) * dist}px`);
+
+        document.body.appendChild(dot);
+        setTimeout(() => dot.remove(), 800);
+      }
+    }
+
+    const canvas = document.getElementById('cosmic-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      stars = [];
+      const starCount = Math.floor((canvas.width * canvas.height) / 3000);
+      for (let i = 0; i < starCount; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 1.6,
+          alpha: Math.random(),
+          speed: 0.005 + Math.random() * 0.015,
+        });
+      }
+    }
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let star of stars) {
+        star.alpha += star.speed;
+        const currentAlpha = Math.abs(Math.sin(star.alpha));
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${currentAlpha * 0.8})`;
+        ctx.fill();
+      }
+      requestAnimationFrame(animateStars);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    animateStars();
+
+    const planetCanvas = document.getElementById('login-planet-canvas');
+    let threeScene, threeCamera, threeRenderer;
+    let celestialBodies = [];
+    let threeAnimId = null;
+    let starFieldPoints, stardustPoints;
+    let targetCameraX = 0, targetCameraY = 15;
+
+    function createProceduralSpaceTexture(type) {
+      const texCanvas = document.createElement('canvas');
+      texCanvas.width = 512;
+      texCanvas.height = 256;
+      const tctx = texCanvas.getContext('2d');
+
+      if (type === 'sun') {
+        const grad = tctx.createRadialGradient(256, 128, 10, 256, 128, 256);
+        grad.addColorStop(0, '#fffbe6');
+        grad.addColorStop(0.3, '#ffcc00');
+        grad.addColorStop(0.7, '#ff5500');
+        grad.addColorStop(1, '#b31a00');
+        tctx.fillStyle = grad;
+        tctx.fillRect(0, 0, 512, 256);
+        for (let i = 0; i < 300; i++) {
+          tctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.15})`;
+          tctx.beginPath();
+          tctx.arc(Math.random() * 512, Math.random() * 256, Math.random() * 8, 0, Math.PI * 2);
+          tctx.fill();
+        }
+      } else if (type === 'earth') {
+        tctx.fillStyle = '#0a235c';
+        tctx.fillRect(0, 0, 512, 256);
+        tctx.fillStyle = '#1e7d32';
+        for (let i = 0; i < 40; i++) {
+          tctx.beginPath();
+          tctx.ellipse(Math.random() * 512, Math.random() * 256, 20 + Math.random() * 45, 10 + Math.random() * 30, Math.random(), 0, Math.PI * 2);
+          tctx.fill();
+        }
+        tctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+        for (let i = 0; i < 50; i++) {
+          tctx.beginPath();
+          tctx.ellipse(Math.random() * 512, Math.random() * 256, 30 + Math.random() * 60, 4 + Math.random() * 10, Math.random() * 0.5, 0, Math.PI * 2);
+          tctx.fill();
+        }
+      } else if (type === 'jupiter') {
+        for (let y = 0; y < 256; y++) {
+          const shade = Math.sin(y * 0.18) * 0.5 + 0.5;
+          const r = Math.floor(180 + shade * 60);
+          const g = Math.floor(120 + shade * 40);
+          const b = Math.floor(80 + shade * 30);
+          tctx.fillStyle = `rgb(${r},${g},${b})`;
+          tctx.fillRect(0, y, 512, 1);
+        }
+        tctx.fillStyle = 'rgba(180, 50, 20, 0.8)';
+        tctx.beginPath();
+        tctx.ellipse(320, 160, 35, 20, 0.1, 0, Math.PI * 2);
+        tctx.fill();
+      } else if (type === 'saturn') {
+        for (let y = 0; y < 256; y++) {
+          const shade = Math.sin(y * 0.12) * 0.3 + 0.7;
+          tctx.fillStyle = `rgb(${Math.floor(220 * shade)}, ${Math.floor(200 * shade)}, ${Math.floor(150 * shade)})`;
+          tctx.fillRect(0, y, 512, 1);
+        }
+      } else if (type === 'mars') {
+        tctx.fillStyle = '#b7410e';
+        tctx.fillRect(0, 0, 512, 256);
+        tctx.fillStyle = '#7a2203';
+        for (let i = 0; i < 60; i++) {
+          tctx.beginPath();
+          tctx.arc(Math.random() * 512, Math.random() * 256, Math.random() * 15, 0, Math.PI * 2);
+          tctx.fill();
+        }
+        tctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+        tctx.fillRect(0, 0, 512, 15);
+        tctx.fillRect(0, 241, 512, 15);
+      } else {
+        tctx.fillStyle = '#8a8f98';
+        tctx.fillRect(0, 0, 512, 256);
+        tctx.fillStyle = '#565a61';
+        for (let i = 0; i < 70; i++) {
+          tctx.beginPath();
+          tctx.arc(Math.random() * 512, Math.random() * 256, Math.random() * 8, 0, Math.PI * 2);
+          tctx.fill();
+        }
+      }
+
+      const texture = new THREE.CanvasTexture(texCanvas);
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.ClampToEdgeWrapping;
+      return texture;
+    }
+
+    function createSaturnRingTexture() {
+      const ringCanvas = document.createElement('canvas');
+      ringCanvas.width = 512;
+      ringCanvas.height = 64;
+      const rctx = ringCanvas.getContext('2d');
+      const grad = rctx.createLinearGradient(0, 0, 512, 0);
+      grad.addColorStop(0, 'rgba(0,0,0,0)');
+      grad.addColorStop(0.15, 'rgba(215, 195, 150, 0.2)');
+      grad.addColorStop(0.45, 'rgba(235, 215, 170, 0.85)');
+      grad.addColorStop(0.55, 'rgba(30, 20, 10, 0.05)');
+      grad.addColorStop(0.65, 'rgba(210, 185, 140, 0.75)');
+      grad.addColorStop(0.92, 'rgba(180, 150, 110, 0.3)');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      rctx.fillStyle = grad;
+      rctx.fillRect(0, 0, 512, 64);
+      return new THREE.CanvasTexture(ringCanvas);
+    }
+
+    function initPlanetarySystem() {
+      if (!planetCanvas || typeof THREE === 'undefined') return;
+
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      if (threeAnimId) {
+        cancelAnimationFrame(threeAnimId);
+        threeAnimId = null;
+      }
+      if (threeRenderer) {
+        threeRenderer.dispose();
+      }
+
+      threeScene = new THREE.Scene();
+      threeCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 2000);
+      threeCamera.position.set(0, 18, 55);
+      threeCamera.lookAt(0, 0, 0);
+
+      threeRenderer = new THREE.WebGLRenderer({
+        canvas: planetCanvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: 'high-performance'
+      });
+      threeRenderer.setSize(width, height);
+      threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      const ambientLight = new THREE.AmbientLight(0x221c3b, 0.55);
+      threeScene.add(ambientLight);
+
+      const sunLight = new THREE.PointLight(0xfff5cc, 2.4, 400);
+      sunLight.position.set(0, 0, 0);
+      threeScene.add(sunLight);
+
+      const starGeo = new THREE.BufferGeometry();
+      const starCount = 1800;
+      const starPositions = new Float32Array(starCount * 3);
+      const starColors = new Float32Array(starCount * 3);
+
+      for (let i = 0; i < starCount; i++) {
+        starPositions[i * 3] = (Math.random() - 0.5) * 800;
+        starPositions[i * 3 + 1] = (Math.random() - 0.5) * 800;
+        starPositions[i * 3 + 2] = (Math.random() - 0.5) * 800;
+
+        const tint = Math.random();
+        if (tint > 0.8) {
+          starColors[i * 3] = 0.7; starColors[i * 3 + 1] = 0.85; starColors[i * 3 + 2] = 1.0;
+        } else if (tint > 0.6) {
+          starColors[i * 3] = 1.0; starColors[i * 3 + 1] = 0.85; starColors[i * 3 + 2] = 0.5;
+        } else {
+          starColors[i * 3] = 0.9; starColors[i * 3 + 1] = 0.9; starColors[i * 3 + 2] = 0.95;
+        }
+      }
+      starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+      starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+
+      const starMat = new THREE.PointsMaterial({
+        size: 1.5,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.85
+      });
+      starFieldPoints = new THREE.Points(starGeo, starMat);
+      threeScene.add(starFieldPoints);
+
+      const dustGeo = new THREE.BufferGeometry();
+      const dustCount = 450;
+      const dustPositions = new Float32Array(dustCount * 3);
+      const dustColors = new Float32Array(dustCount * 3);
+
+      for (let i = 0; i < dustCount; i++) {
+        const radius = 10 + Math.random() * 45;
+        const angle = Math.random() * Math.PI * 2;
+        dustPositions[i * 3] = Math.cos(angle) * radius;
+        dustPositions[i * 3 + 1] = (Math.random() - 0.5) * 16;
+        dustPositions[i * 3 + 2] = Math.sin(angle) * radius;
+
+        const pCol = Math.random();
+        if (pCol > 0.6) {
+          dustColors[i * 3] = 1.0; dustColors[i * 3 + 1] = 0.82; dustColors[i * 3 + 2] = 0.4;
+        } else if (pCol > 0.3) {
+          dustColors[i * 3] = 0.78; dustColors[i * 3 + 1] = 0.49; dustColors[i * 3 + 2] = 1.0;
+        } else {
+          dustColors[i * 3] = 0.02; dustColors[i * 3 + 1] = 0.84; dustColors[i * 3 + 2] = 0.63;
+        }
+      }
+      dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
+      dustGeo.setAttribute('color', new THREE.BufferAttribute(dustColors, 3));
+
+      const dustMat = new THREE.PointsMaterial({
+        size: 2.2,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.75,
+        blending: THREE.AdditiveBlending
+      });
+      stardustPoints = new THREE.Points(dustGeo, dustMat);
+      threeScene.add(stardustPoints);
+
+      const sunGeo = new THREE.SphereGeometry(4.2, 32, 32);
+      const sunMat = new THREE.MeshBasicMaterial({
+        map: createProceduralSpaceTexture('sun')
+      });
+      const sunMesh = new THREE.Mesh(sunGeo, sunMat);
+      threeScene.add(sunMesh);
+
+      const glowCanvas = document.createElement('canvas');
+      glowCanvas.width = 128; glowCanvas.height = 128;
+      const gctx = glowCanvas.getContext('2d');
+      const ggrad = gctx.createRadialGradient(64, 64, 10, 64, 64, 64);
+      ggrad.addColorStop(0, 'rgba(255, 210, 100, 0.95)');
+      ggrad.addColorStop(0.35, 'rgba(255, 120, 30, 0.5)');
+      ggrad.addColorStop(0.7, 'rgba(200, 50, 200, 0.15)');
+      ggrad.addColorStop(1, 'rgba(0,0,0,0)');
+      gctx.fillStyle = ggrad;
+      gctx.fillRect(0, 0, 128, 128);
+      const glowTex = new THREE.CanvasTexture(glowCanvas);
+      const glowMat = new THREE.SpriteMaterial({ map: glowTex, transparent: true, blending: THREE.AdditiveBlending });
+      const sunGlow = new THREE.Sprite(glowMat);
+      sunGlow.scale.set(22, 22, 1);
+      threeScene.add(sunGlow);
+
+      celestialBodies = [];
+      const planetsConfig = [
+        { name: 'Mercury', radius: 0.65, dist: 7.5, speed: 0.024, rotSpeed: 0.01, tex: 'mercury', ring: false },
+        { name: 'Venus', radius: 1.1, dist: 11.5, speed: 0.018, rotSpeed: 0.008, tex: 'saturn', ring: false },
+        { name: 'Earth', radius: 1.3, dist: 16.5, speed: 0.012, rotSpeed: 0.015, tex: 'earth', ring: false, hasMoon: true },
+        { name: 'Mars', radius: 0.9, dist: 22.0, speed: 0.009, rotSpeed: 0.014, tex: 'mars', ring: false },
+        { name: 'Jupiter', radius: 2.8, dist: 30.0, speed: 0.005, rotSpeed: 0.025, tex: 'jupiter', ring: false },
+        { name: 'Saturn', radius: 2.2, dist: 39.0, speed: 0.0035, rotSpeed: 0.022, tex: 'saturn', ring: true }
+      ];
+
+      planetsConfig.forEach(p => {
+        const pGeo = new THREE.SphereGeometry(p.radius, 32, 32);
+        const pMat = new THREE.MeshStandardMaterial({
+          map: createProceduralSpaceTexture(p.tex),
+          roughness: 0.7,
+          metalness: 0.1
+        });
+        const pMesh = new THREE.Mesh(pGeo, pMat);
+
+        const orbitPoints = [];
+        for (let i = 0; i <= 64; i++) {
+          const theta = (i / 64) * Math.PI * 2;
+          orbitPoints.push(new THREE.Vector3(Math.cos(theta) * p.dist, 0, Math.sin(theta) * p.dist));
+        }
+        const orbitGeo = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+        const orbitMat = new THREE.LineBasicMaterial({ color: 0x9d4edd, transparent: true, opacity: 0.18 });
+        const orbitLine = new THREE.Line(orbitGeo, orbitMat);
+        threeScene.add(orbitLine);
+
+        let ringMesh = null;
+        if (p.ring) {
+          const ringGeo = new THREE.RingGeometry(p.radius * 1.35, p.radius * 2.6, 64);
+          ringGeo.rotateX(-Math.PI / 2);
+          const ringMat = new THREE.MeshBasicMaterial({
+            map: createSaturnRingTexture(),
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.9
+          });
+          ringMesh = new THREE.Mesh(ringGeo, ringMat);
+          ringMesh.rotation.z = THREE.MathUtils.degToRad(26.7);
+          threeScene.add(ringMesh);
+        }
+
+        let moonMesh = null;
+        if (p.hasMoon) {
+          const mGeo = new THREE.SphereGeometry(0.35, 16, 16);
+          const mMat = new THREE.MeshStandardMaterial({
+            map: createProceduralSpaceTexture('moon'),
+            roughness: 0.9
+          });
+          moonMesh = new THREE.Mesh(mGeo, mMat);
+          threeScene.add(moonMesh);
+        }
+
+        threeScene.add(pMesh);
+
+        celestialBodies.push({
+          mesh: pMesh,
+          ringMesh: ringMesh,
+          moonMesh: moonMesh,
+          dist: p.dist,
+          angle: Math.random() * Math.PI * 2,
+          speed: p.speed,
+          rotSpeed: p.rotSpeed,
+          moonAngle: 0
+        });
+      });
+
+      window.addEventListener('mousemove', onMouseMoveParallax);
+      window.addEventListener('touchmove', onTouchMoveParallax, { passive: true });
+
+      function renderThreeScene() {
+        sunMesh.rotation.y += 0.003;
+
+        celestialBodies.forEach(b => {
+          b.angle += b.speed * 0.45;
+          const px = Math.cos(b.angle) * b.dist;
+          const pz = Math.sin(b.angle) * b.dist;
+
+          b.mesh.position.set(px, 0, pz);
+          b.mesh.rotation.y += b.rotSpeed;
+
+          if (b.ringMesh) {
+            b.ringMesh.position.set(px, 0, pz);
+            b.ringMesh.rotation.y += b.rotSpeed * 0.5;
+          }
+
+          if (b.moonMesh) {
+            b.moonAngle += 0.04;
+            b.moonMesh.position.set(
+              px + Math.cos(b.moonAngle) * 2.3,
+              Math.sin(b.moonAngle) * 0.6,
+              pz + Math.sin(b.moonAngle) * 2.3
+            );
+            b.moonMesh.rotation.y += 0.02;
+          }
+        });
+
+        if (starFieldPoints) {
+          starFieldPoints.rotation.y += 0.0003;
+          starFieldPoints.rotation.x += 0.0001;
+        }
+
+        if (stardustPoints) {
+          stardustPoints.rotation.y += 0.0012;
+        }
+
+        threeCamera.position.x += (targetCameraX - threeCamera.position.x) * 0.04;
+        threeCamera.position.y += (targetCameraY - threeCamera.position.y) * 0.04;
+        threeCamera.lookAt(0, 0, 0);
+
+        threeRenderer.render(threeScene, threeCamera);
+        threeAnimId = requestAnimationFrame(renderThreeScene);
+      }
+
+      renderThreeScene();
+    }
+
+    function onMouseMoveParallax(e) {
+      const normX = (e.clientX / window.innerWidth) * 2 - 1;
+      const normY = (e.clientY / window.innerHeight) * 2 - 1;
+      targetCameraX = normX * 18;
+      targetCameraY = 16 - normY * 12;
+    }
+
+    function onTouchMoveParallax(e) {
+      if (e.touches && e.touches[0]) {
+        const normX = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
+        const normY = (e.touches[0].clientY / window.innerHeight) * 2 - 1;
+        targetCameraX = normX * 14;
+        targetCameraY = 16 - normY * 10;
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      if (planetCanvas && threeRenderer && threeCamera) {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        threeCamera.aspect = w / h;
+        threeCamera.updateProjectionMatrix();
+        threeRenderer.setSize(w, h);
+      }
+    });
+
+    function playMysticChime(freq = 528, duration = 1.5) {
+      if (!audioEnabled) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        console.warn('Audio play prevented:', e);
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const icon = document.getElementById('audio-icon');
+      const label = document.getElementById('audio-label');
+      if (audioEnabled) {
+        icon.className = 'fa-solid fa-volume-high text-amber-300';
+        label.innerText = currentLang === 'si' ? 'ශබ්දය සක්‍රියයි' : 'Audio On';
+        playMysticChime(639, 1.2);
+        showToast(currentLang === 'si' ? 'විශ්වීය ශබ්ද සක්‍රිය විය!' : 'Cosmic audio enabled!');
+      } else {
+        icon.className = 'fa-solid fa-volume-xmark';
+        label.innerText = currentLang === 'si' ? 'ශබ්දය අක්‍රියයි' : 'Audio Off';
+        showToast(currentLang === 'si' ? 'ශබ්දය අක්‍රිය කරන ලදී' : 'Audio muted');
+      }
+    }
+
+    function showToast(msg, iconClass = 'fa-circle-check') {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      const toastIcon = document.getElementById('toast-icon');
+      toastMsg.innerText = msg;
+      toastIcon.className = `fa-solid ${iconClass} text-amber-400 text-lg`;
+      toast.classList.remove('translate-y-32', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-32', 'opacity-0');
+      }, 3500);
+    }
+
+    function openLoginModal() {
+      const modal = document.getElementById('auth-modal');
+      const phoneInput = document.getElementById('auth-input-phone');
+      const pwdInput = document.getElementById('auth-input-password');
+      const errBox = document.getElementById('pwd-error-box');
+      errBox.classList.add('hidden');
+      modal.classList.remove('hidden');
+
+      initPlanetarySystem();
+
+      setTimeout(() => {
+        if (!phoneInput.value) {
+          phoneInput.focus();
+        } else {
+          pwdInput.focus();
+        }
+      }, 150);
+    }
+
+    function togglePasswordVisibility() {
+      const input = document.getElementById('auth-input-password');
+      const icon = document.getElementById('pwd-eye-icon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fa-solid fa-eye-slash text-amber-300';
+      } else {
+        input.type = 'password';
+        icon.className = 'fa-solid fa-eye text-purple-400';
+      }
+    }
+
+    function handlePasswordSubmit() {
+      const phoneInput = document.getElementById('auth-input-phone');
+      const pwdInput = document.getElementById('auth-input-password');
+      const errBox = document.getElementById('pwd-error-box');
+      const errText = document.getElementById('pwd-error-text');
+      const lockIcon = document.getElementById('modal-lock-icon');
+      
+      const enteredPhone = phoneInput.value.trim();
+      const enteredValue = pwdInput.value.trim();
+
+      if (!enteredPhone || enteredPhone.length < 8) {
+        errBox.classList.remove('hidden');
+        errText.innerText = currentLang === 'si' ? 'කරුණාකර වලංගු WhatsApp අංකයක් ඇතුළත් කරන්න!' : 'Please enter a valid WhatsApp phone number!';
+        phoneInput.focus();
+        playMysticChime(200, 0.4);
+        return;
+      }
+
+      if (enteredValue === '5566') {
+        userWhatsAppPhone = enteredPhone;
+        errBox.classList.add('hidden');
+        lockIcon.className = 'fa-solid fa-lock-open text-2xl text-green-400';
+        playMysticChime(880, 0.8);
+
+        const navBtn = document.getElementById('auth-nav-btn');
+        const navLabel = document.getElementById('auth-nav-label');
+        const navIcon = document.getElementById('auth-nav-icon');
+        
+        navLabel.innerText = `${userWhatsAppPhone} ✓`;
+        navIcon.className = 'fa-brands fa-whatsapp text-emerald-400 text-base';
+        navBtn.classList.remove('from-purple-700', 'via-indigo-600', 'to-amber-500');
+        navBtn.classList.add('from-emerald-700', 'to-green-600');
+
+        showToast(
+          currentLang === 'si' 
+            ? `සාදරයෙන් පිළිගනිමු! (${userWhatsAppPhone})` 
+            : `Welcome! Unlocked for ${userWhatsAppPhone}`, 
+          'fa-lock-open'
+        );
+
+        setTimeout(() => {
+          document.getElementById('auth-modal').classList.add('hidden');
+          if (threeAnimId) {
+            cancelAnimationFrame(threeAnimId);
+            threeAnimId = null;
+          }
+        }, 500);
+
+      } else {
+        errBox.classList.remove('hidden');
+        errText.innerText = currentLang === 'si' ? 'මුරපදය වැරදියි! කරුණාකර නිවැරදි මුරපදය ඇතුළත් කරන්න.' : 'Incorrect password! Please try again.';
+        pwdInput.classList.add('border-rose-500');
+        playMysticChime(200, 0.5);
+
+        showToast(
+          currentLang === 'si' 
+            ? 'මුරපදය වැරදියි!' 
+            : 'Incorrect password!', 
+          'fa-triangle-exclamation'
+        );
+
+        pwdInput.value = '';
+        pwdInput.focus();
+        setTimeout(() => {
+          pwdInput.classList.remove('border-rose-500');
+        }, 1200);
+      }
+    }
+
+    function selectPalmSide(side) {
+      selectedHand = side;
+      const btnRight = document.getElementById('btn-palm-right');
+      const btnLeft = document.getElementById('btn-palm-left');
+      const guideIcon = document.getElementById('palm-guide-icon');
+      const promptText = document.getElementById('palm-prompt-text');
+      const subText = document.getElementById('palm-hand-subtext');
+
+      if (side === 'right') {
+        btnRight.className = 'px-2.5 py-1 rounded-md font-bold transition bg-gradient-to-r from-amber-500 to-purple-600 text-white shadow';
+        btnLeft.className = 'px-2.5 py-1 rounded-md font-medium text-purple-300 hover:text-white transition';
+        guideIcon.className = 'fa-regular fa-hand text-8xl text-amber-300 animate-pulse';
+        promptText.innerText = currentLang === 'si' ? 'දකුණු අත්ල කැමරාවට පෙන්වා ස්කෑන් කරන්න' : 'Scan your right palm with camera';
+        subText.innerText = currentLang === 'si' ? 'ස්වෝත්සාහය සහ වර්තමාන කර්මය විග්‍රහ කෙරේ' : 'Analyzes self-effort & present destiny';
+      } else {
+        btnLeft.className = 'px-2.5 py-1 rounded-md font-bold transition bg-gradient-to-r from-amber-500 to-purple-600 text-white shadow';
+        btnRight.className = 'px-2.5 py-1 rounded-md font-medium text-purple-300 hover:text-white transition';
+        guideIcon.className = 'fa-regular fa-hand text-8xl text-amber-300 animate-pulse -scale-x-100';
+        promptText.innerText = currentLang === 'si' ? 'වම් අත්ල කැමරාවට පෙන්වා ස්කෑන් කරන්න' : 'Scan your left palm with camera';
+        subText.innerText = currentLang === 'si' ? 'උත්පත්ති වාසනාව සහ ආත්මීය ශක්තිය විග්‍රහ කෙරේ' : 'Analyzes innate luck & karmic gifts';
+      }
+      playMysticChime(580, 0.4);
+    }
+
+    function togglePalmCameraMode() {
+      palmFacingMode = palmFacingMode === 'environment' ? 'user' : 'environment';
+      const label = document.getElementById('lbl-palm-cam-mode');
+      if (palmFacingMode === 'environment') {
+        label.innerText = currentLang === 'si' ? 'පසුපස කැමරාව (Back Cam)' : 'Back Camera';
+      } else {
+        label.innerText = currentLang === 'si' ? 'ඉදිරිපස කැමරාව (Front Cam)' : 'Front Camera';
+      }
+      playMysticChime(600, 0.3);
+    }
+
+    async function triggerPalmScan(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (isPalmScanning) return;
+
+      const video = document.getElementById('palm-webcam-video');
+      const laser = document.getElementById('palm-laser');
+      const placeholder = document.getElementById('palm-placeholder');
+      const guide = document.getElementById('palm-guide');
+      const previewBadge = document.getElementById('palm-scanned-preview');
+      const badgeText = document.getElementById('palm-scanned-confirm-text');
+      const statusBadge = document.getElementById('palm-status-badge');
+      const fileInput = document.getElementById('palm-camera-input');
+
+      try {
+        if (palmMediaStream) {
+          palmMediaStream.getTracks().forEach(t => t.stop());
+        }
+        palmMediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: palmFacingMode },
+          audio: false
+        });
+        video.srcObject = palmMediaStream;
+        video.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+        guide.classList.remove('hidden');
+        laser.classList.remove('hidden');
+        isPalmScanning = true;
+        playMysticChime(490, 1.8);
+
+        setTimeout(() => {
+          if (palmMediaStream) {
+            palmMediaStream.getTracks().forEach(t => t.stop());
+            palmMediaStream = null;
+          }
+          video.classList.add('hidden');
+          laser.classList.add('hidden');
+          guide.classList.add('hidden');
+          previewBadge.classList.remove('hidden');
+          
+          isPalmScanned = true;
+          isPalmScanning = false;
+          statusBadge.innerText = currentLang === 'si' ? 'තහවුරු විය ✓' : 'Verified ✓';
+          statusBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-900/80 text-emerald-300 border border-emerald-500';
+          badgeText.innerText = selectedHand === 'right' 
+            ? (currentLang === 'si' ? 'දකුණු අත් රේඛා සාර්ථකව හඳුනාගන්නා ලදී' : 'Right palm verified') 
+            : (currentLang === 'si' ? 'වම් අත් රේඛා සාර්ථකව හඳුනාගන්නා ලදී' : 'Left palm verified');
+
+          playMysticChime(784, 1.0);
+          showToast(currentLang === 'si' ? 'අත් රේඛා සාර්ථකව ස්කෑන් විය!' : 'Palm lines scanned successfully!');
+        }, 3200);
+
+      } catch (err) {
+        if (fileInput) {
+          fileInput.click();
+        } else {
+          runPalmSimulation();
+        }
+      }
+    }
+
+    function handlePalmPhoto(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const img = document.getElementById('palm-captured-img');
+      const placeholder = document.getElementById('palm-placeholder');
+      const laser = document.getElementById('palm-laser');
+      const previewBadge = document.getElementById('palm-scanned-preview');
+      const statusBadge = document.getElementById('palm-status-badge');
+
+      img.src = URL.createObjectURL(file);
+      img.classList.remove('hidden');
+      placeholder.classList.add('hidden');
+      laser.classList.remove('hidden');
+
+      playMysticChime(520, 2.0);
+      setTimeout(() => {
+        laser.classList.add('hidden');
+        previewBadge.classList.remove('hidden');
+        isPalmScanned = true;
+        statusBadge.innerText = currentLang === 'si' ? 'තහවුරු විය ✓' : 'Verified ✓';
+        statusBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-900/80 text-emerald-300 border border-emerald-500';
+        playMysticChime(784, 1.0);
+        showToast(currentLang === 'si' ? 'අත්ල ඡායාරූපය සාර්ථකව ස්කෑන් විය!' : 'Palm image scanned successfully!');
+      }, 2500);
+    }
+
+    function runPalmSimulation() {
+      const laser = document.getElementById('palm-laser');
+      const previewBadge = document.getElementById('palm-scanned-preview');
+      const statusBadge = document.getElementById('palm-status-badge');
+      laser.classList.remove('hidden');
+      playMysticChime(440, 2.0);
+
+      setTimeout(() => {
+        laser.classList.add('hidden');
+        previewBadge.classList.remove('hidden');
+        isPalmScanned = true;
+        statusBadge.innerText = currentLang === 'si' ? 'තහවුරු විය ✓' : 'Verified ✓';
+        statusBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-900/80 text-emerald-300 border border-emerald-500';
+        playMysticChime(784, 1.0);
+        showToast(currentLang === 'si' ? 'අත් රේඛා ස්කෑන් එක සාර්ථක විය!' : 'Palm analysis complete!');
+      }, 2500);
+    }
+
+    async function triggerFaceScan(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (isFaceScanning) return;
+
+      const video = document.getElementById('webcam-video');
+      const laser = document.getElementById('face-laser');
+      const placeholder = document.getElementById('face-placeholder');
+      const previewBadge = document.getElementById('face-scanned-preview');
+      const statusBadge = document.getElementById('face-status-badge');
+      const fileInput = document.getElementById('face-camera-input');
+
+      try {
+        if (mediaStream) {
+          mediaStream.getTracks().forEach(t => t.stop());
+        }
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user' },
+          audio: false
+        });
+        video.srcObject = mediaStream;
+        video.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+        laser.classList.remove('hidden');
+        isFaceScanning = true;
+        playMysticChime(659, 1.8);
+
+        setTimeout(() => {
+          if (mediaStream) {
+            mediaStream.getTracks().forEach(t => t.stop());
+            mediaStream = null;
+          }
+          video.classList.add('hidden');
+          laser.classList.add('hidden');
+          previewBadge.classList.remove('hidden');
+          
+          isFaceScanned = true;
+          isFaceScanning = false;
+          statusBadge.innerText = currentLang === 'si' ? 'තහවුරු විය ✓' : 'Verified ✓';
+          statusBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-cyan-900/80 text-cyan-300 border border-cyan-500';
+
+          playMysticChime(880, 1.0);
+          showToast(currentLang === 'si' ? 'මුහුණේ Aura තේජස සාර්ථකව තහවුරු විය!' : 'Facial aura verified successfully!');
+        }, 3000);
+
+      } catch (err) {
+        if (fileInput) {
+          fileInput.click();
+        } else {
+          runFaceSimulation();
+        }
+      }
+    }
+
+    function handleFacePhoto(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const img = document.getElementById('face-captured-img');
+      const placeholder = document.getElementById('face-placeholder');
+      const laser = document.getElementById('face-laser');
+      const previewBadge = document.getElementById('face-scanned-preview');
+      const statusBadge = document.getElementById('face-status-badge');
+
+      img.src = URL.createObjectURL(file);
+      img.classList.remove('hidden');
+      placeholder.classList.add('hidden');
+      laser.classList.remove('hidden');
+
+      playMysticChime(660, 2.0);
+      setTimeout(() => {
+        laser.classList.add('hidden');
+        previewBadge.classList.remove('hidden');
+        isFaceScanned = true;
+        statusBadge.innerText = currentLang === 'si' ? 'තහවුරු විය ✓' : 'Verified ✓';
+        statusBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-cyan-900/80 text-cyan-300 border border-cyan-500';
+        playMysticChime(880, 1.0);
+        showToast(currentLang === 'si' ? 'මුහුණේ ශක්ති වලල්ල හඳුනාගන්නා ලදී!' : 'Aura photo verified successfully!');
+      }, 2500);
+    }
+
+    function runFaceSimulation() {
+      const laser = document.getElementById('face-laser');
+      const previewBadge = document.getElementById('face-scanned-preview');
+      const statusBadge = document.getElementById('face-status-badge');
+      laser.classList.remove('hidden');
+      playMysticChime(554, 2.0);
+
+      setTimeout(() => {
+        laser.classList.add('hidden');
+        previewBadge.classList.remove('hidden');
+        isFaceScanned = true;
+        statusBadge.innerText = currentLang === 'si' ? 'තහවුරු විය ✓' : 'Verified ✓';
+        statusBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-cyan-900/80 text-cyan-300 border border-cyan-500';
+        playMysticChime(880, 1.0);
+        showToast(currentLang === 'si' ? 'මුහුණේ Aura තේජස තහවුරු විය!' : 'Facial aura analysis complete!');
+      }, 2500);
+    }
+
+    const zodiacData = [
+      { name_en: 'Capricorn', name_si: 'මකර', symbol: '♑', icon: 'fa-mountain', start: [1, 1], end: [1, 19], element_en: 'Earth', element_si: 'පඨවි (පොළොව)', ruler_en: 'Saturn', ruler_si: 'ශනි (සෙනසුරු)', luckyNums: '8, 17, 26', luckyColor_en: 'Dark Blue / Black', luckyColor_si: 'තද නිල් / කළු', luckyDay_en: 'Saturday', luckyDay_si: 'සෙනසුරාදා', gemstone_en: 'Blue Sapphire', gemstone_si: 'නිල් මැණික්' },
+      { name_en: 'Aquarius', name_si: 'කුම්භ', symbol: '♒', icon: 'fa-water', start: [1, 20], end: [2, 18], element_en: 'Air', element_si: 'වායෝ (සුළඟ)', ruler_en: 'Uranus / Saturn', ruler_si: 'යුරේනස් / ශනි', luckyNums: '4, 13, 22', luckyColor_en: 'Electric Blue', luckyColor_si: 'දීප්තිමත් නිල්', luckyDay_en: 'Saturday', luckyDay_si: 'සෙනසුරාදා', gemstone_en: 'Garnet', gemstone_si: 'ගාර්නට්' },
+      { name_en: 'Pisces', name_si: 'මීන', symbol: '♓', icon: 'fa-fish', start: [2, 19], end: [3, 20], element_en: 'Water', element_si: 'ආපෝ (ජලය)', ruler_en: 'Jupiter / Neptune', ruler_si: 'ගුරු / නෙප්චූන්', luckyNums: '3, 7, 12', luckyColor_en: 'Sea Green / Silver', luckyColor_si: 'මුහුදු කොළ / රිදී', luckyDay_en: 'Thursday', luckyDay_si: 'බ්‍රහස්පතින්දා', gemstone_en: 'Aquamarine', gemstone_si: 'ඇක්වාමැරීන්' },
+      { name_en: 'Aries', name_si: 'මේෂ', symbol: '♈', icon: 'fa-fire', start: [3, 21], end: [4, 19], element_en: 'Fire', element_si: 'තේජෝ (ගින්න)', ruler_en: 'Mars', ruler_si: 'කුජ (අඟහරු)', luckyNums: '9, 18, 27', luckyColor_en: 'Crimson Red', luckyColor_si: 'තද රතු', luckyDay_en: 'Tuesday', luckyDay_si: 'අඟහරුවාදා', gemstone_en: 'Red Coral', gemstone_si: 'රතු පබළු' },
+      { name_en: 'Taurus', name_si: 'වෘෂභ', symbol: '♉', icon: 'fa-seedling', start: [4, 20], end: [5, 20], element_en: 'Earth', element_si: 'පඨවි (පොළොව)', ruler_en: 'Venus', ruler_si: 'ශුක්‍ර (සිකුරු)', luckyNums: '6, 15, 24', luckyColor_en: 'Emerald Green', luckyColor_si: 'මරකත කොළ', luckyDay_en: 'Friday', luckyDay_si: 'සිකුරාදා', gemstone_en: 'Diamond / Emerald', gemstone_si: 'දියමන්ති / පච්ච' },
+      { name_en: 'Gemini', name_si: 'මිථුන', symbol: '♊', icon: 'fa-wind', start: [5, 21], end: [6, 20], element_en: 'Air', element_si: 'වායෝ (සුළඟ)', ruler_en: 'Mercury', ruler_si: 'බුධ', luckyNums: '5, 14, 23', luckyColor_en: 'Yellow', luckyColor_si: 'කහ පැහැය', luckyDay_en: 'Wednesday', luckyDay_si: 'බදාදා', gemstone_en: 'Agate / Emerald', gemstone_si: 'අගස්ති' },
+      { name_en: 'Cancer', name_si: 'කටක', symbol: '♋', icon: 'fa-moon', start: [6, 21], end: [7, 22], element_en: 'Water', element_si: 'ආපෝ (ජලය)', ruler_en: 'Moon', ruler_si: 'චන්ද්‍රයා', luckyNums: '2, 11, 20', luckyColor_en: 'Pearl White / Silver', luckyColor_si: 'මුතු සුදු / රිදී', luckyDay_en: 'Monday', luckyDay_si: 'සඳුදා', gemstone_en: 'Moonstone / Pearl', gemstone_si: 'මුතු / චන්ද්‍රකාන්ත' },
+      { name_en: 'Leo', name_si: 'සිංහ', symbol: '♌', icon: 'fa-sun', start: [7, 23], end: [8, 22], element_en: 'Fire', element_si: 'තේජෝ (ගින්න)', ruler_en: 'Sun', ruler_si: 'සූර්යයා', luckyNums: '1, 10, 19', luckyColor_en: 'Gold / Orange', luckyColor_si: 'රන්වන් / තැඹිලි', luckyDay_en: 'Sunday', luckyDay_si: 'ඉරිදා', gemstone_en: 'Ruby', gemstone_si: 'පද්මරාග' },
+      { name_en: 'Virgo', name_si: 'කන්‍යා', symbol: '♍', icon: 'fa-feather', start: [8, 23], end: [9, 22], element_en: 'Earth', element_si: 'පඨවි (පොළොව)', ruler_en: 'Mercury', ruler_si: 'බුධ', luckyNums: '5, 14, 32', luckyColor_en: 'Olive Green / Grey', luckyColor_si: 'ඔලිව් කොළ / අළු', luckyDay_en: 'Wednesday', luckyDay_si: 'බදාදා', gemstone_en: 'Sapphire', gemstone_si: 'නිල් මැණික්' },
+      { name_en: 'Libra', name_si: 'තුලා', symbol: '♎', icon: 'fa-scale-balanced', start: [9, 23], end: [10, 22], element_en: 'Air', element_si: 'වායෝ (සුළඟ)', ruler_en: 'Venus', ruler_si: 'ශුක්‍ර (සිකුරු)', luckyNums: '6, 15, 24', luckyColor_en: 'Pastel Blue / Rose Pink', luckyColor_si: 'ළා නිල් / රෝස', luckyDay_en: 'Friday', luckyDay_si: 'සිකුරාදා', gemstone_en: 'Opal / Diamond', gemstone_si: 'ඕපල්' },
+      { name_en: 'Scorpio', name_si: 'වෘශ්චික', symbol: '♏', icon: 'fa-bolt', start: [10, 23], end: [11, 21], element_en: 'Water', element_si: 'ආපෝ (ජලය)', ruler_en: 'Mars / Pluto', ruler_si: 'කුජ / ප්ලූටෝ', luckyNums: '9, 18, 27', luckyColor_en: 'Deep Maroon / Black', luckyColor_si: 'තද මෙරූන් / කළු', luckyDay_en: 'Tuesday', luckyDay_si: 'අඟහරුවාදා', gemstone_en: 'Topaz', gemstone_si: 'පුෂ්පරාග' },
+      { name_en: 'Sagittarius', name_si: 'ධනු', symbol: '♐', icon: 'fa-bullseye', start: [11, 22], end: [12, 21], element_en: 'Fire', element_si: 'තේජෝ (ගින්න)', ruler_en: 'Jupiter', ruler_si: 'ගුරු (බ්‍රහස්පති)', luckyNums: '3, 12, 21', luckyColor_en: 'Purple / Royal Blue', luckyColor_si: 'දම් / රාජකීය නිල්', luckyDay_en: 'Thursday', luckyDay_si: 'බ්‍රහස්පතින්දා', gemstone_en: 'Yellow Sapphire', gemstone_si: 'කහ පුෂ්පරාග' },
+      { name_en: 'Capricorn', name_si: 'මකර', symbol: '♑', icon: 'fa-mountain', start: [12, 22], end: [12, 31], element_en: 'Earth', element_si: 'පඨවි (පොළොව)', ruler_en: 'Saturn', ruler_si: 'ශනි (සෙනසුරු)', luckyNums: '8, 17, 26', luckyColor_en: 'Dark Blue / Black', luckyColor_si: 'තද නිල් / කළු', luckyDay_en: 'Saturday', luckyDay_si: 'සෙනසුරාදා', gemstone_en: 'Blue Sapphire', gemstone_si: 'නිල් මැණික්' }
+    ];
+
+    function getZodiac(month, day) {
+      for (let z of zodiacData) {
+        const [sm, sd] = z.start;
+        const [em, ed] = z.end;
+        if (sm === em) {
+          if (month === sm && day >= sd && day <= ed) return z;
+        } else {
+          if ((month === sm && day >= sd) || (month === em && day <= ed)) return z;
+        }
+      }
+      return zodiacData[0];
+    }
+
+    function calculateLifePath(year, month, day) {
+      function sumDigits(n) {
+        let sum = 0;
+        while (n > 0) {
+          sum += n % 10;
+          n = Math.floor(n / 10);
+        }
+        return sum;
+      }
+      function reduceToSingle(num) {
+        while (num > 9 && num !== 11 && num !== 22 && num !== 33) {
+          num = sumDigits(num);
+        }
+        return num;
+      }
+      const ySum = reduceToSingle(year);
+      const mSum = reduceToSingle(month);
+      const dSum = reduceToSingle(day);
+      return reduceToSingle(ySum + mSum + dSum);
+    }
+
+    function generatePredictions(name, dob, focus, zodiac, lifePath) {
+      const birth = new Date(dob);
+      const today = new Date();
+
+      let ageYears = today.getFullYear() - birth.getFullYear();
+      const monthDiff = today.getMonth() - birth.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+        ageYears--;
+      }
+
+      const diffTime = Math.abs(today - birth);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      let nextBday = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
+      if (today > nextBday) {
+        nextBday.setFullYear(today.getFullYear() + 1);
+      }
+      const daysToNext = Math.ceil((nextBday - today) / (1000 * 60 * 60 * 24));
+
+      const wealth_si = `${name} මහත්මයාණෙනි/මහත්මියනි, ඔබේ ${zodiac.name_si} ලග්නය සහ ජන්ම අංක #${lifePath} හි ග්‍රහ බලපෑම අනුව ඉදිරි වසර දෙක තුළ ඔබගේ ආර්ථික ශක්තියේ නව පිබිදීමක් ඇතිවේ. අනවශ්‍ය වියදම් පාලනය කර ස්ථාවර ආයෝජනයකට හෝ ස්වයං ව්‍යාපාරයකට මුලපිරීමට ඉතා සුබ කාලයකි. විදේශීය හෝ දුර බැහැර සබඳතා මගින් අනපේක්ෂිත ධන වාසනාවක් උදාවනු ඇත.`;
+      const wealth_en = `Based on your ${zodiac.name_en} sign and Life Path #${lifePath}, your financial horizon is stepping into an upward energetic spiral. The upcoming two years present fertile ground for business expansion, long-term investments, and unforeseen windfalls through distant alliances.`;
+
+      const love_si = `ඔබගේ කරුණාවන්ත සිත සහ ආකර්ෂණීය පෞරුෂය අන්‍යයන්ගේ හදවත දිනාගැනීමට උපකාරී වේ. ඔබගේ ජීවන සහකරු/සහකාරිය ඔබට විශාල මානසික ශක්තියක් ලබාදෙනු ඇත. සුළු මතභේද වලදී කෝපය පාලනය කර සාකච්ඡා මාර්ගයෙන් විසඳා ගැනීමෙන් පවුලේ සමඟිය හා ප්‍රේමයේ මිහිරියාව අඛණ්ඩව රඳවා ගත හැක.`;
+      const love_en = `Your magnetic aura radiates warmth and fidelity. Heart connections will experience deepened intimacy and mutual understanding. Clear communication and empathy will turn minor friction into unbreakable bonds of trust.`;
+
+      const health_si = `ජීව ශක්තිය සහ නිරෝගීභාවය ආරක්ෂා කර ගැනීම සඳහා ප්‍රමාණවත් නින්දක්, ජලය පානය සහ මානසික සන්සුන්භාවය අත්‍යවශ්‍ය වේ. ශරීරයේ අධික උෂ්ණාධික තත්ත්වයන්ගෙන් ප්‍රවේසම් වන්න. භාවනාව හෝ සොබාදහම සමඟ ගතකරන සුළු කාලයකින් ඔබේ ආත්මීය Aura ශක්තිය ඉතා ඉහළ මට්ටමකට වර්ධනය කරගත හැක.`;
+      const health_en = `Your physical vitality responds immediately to mental clarity. Prioritize regular hydration, sound sleep cycles, and mindful breathing. Grounding yourself in natural surroundings will revitalize your inner energy centers (chakras).`;
+
+      const milestoneYears = [birth.getFullYear() + 24, birth.getFullYear() + 30, birth.getFullYear() + 36, birth.getFullYear() + 45, birth.getFullYear() + 54].filter(y => y >= today.getFullYear());
+      const turningYear = milestoneYears.length > 0 ? milestoneYears[0] : today.getFullYear() + 2;
+
+      const destiny_si = `ඔබගේ ජීවිතයේ ඉතාම තීරණාත්මක සහ වාසනාවන්තම හැරවුම් වසරක් ලෙස ${turningYear} සනිටුහන් වේ. එම කාලයේදී නිවාස, දේපළ හෝ නව වෘත්තීය උසස්වීම් ලැබීමට විශ්වයේ ආශිර්වාදය නොමඳව හිමිවේ. ඔබ ගන්නා ධනාත්මක තීරණ ඔබේ ඉදිරි දශක ගණනාවක වාසනාව තීරණය කරනු ඇත.`;
+      const destiny_en = `The cosmic transit highlights ${turningYear} as a paramount milestone year. Significant real estate acquisitions, leadership ascents, or landmark domestic milestones will crystallize under this celestial wave.`;
+
+      return {
+        name,
+        birthDate: dob,
+        ageYears,
+        diffDays,
+        daysToNext,
+        zodiac,
+        lifePath,
+        predictions: {
+          wealth: { si: wealth_si, en: wealth_en },
+          love: { si: love_si, en: love_en },
+          health: { si: health_si, en: health_en },
+          destiny: { si: destiny_si, en: destiny_en }
+        }
+      };
+    }
+
+    function calculateDestiny() {
+      const nameInput = document.getElementById('userName').value.trim();
+      const dobInput = document.getElementById('birthDate').value;
+      const errorBox = document.getElementById('validation-error-box');
+      const errorTitle = document.getElementById('error-title');
+      const errorDesc = document.getElementById('error-desc');
+
+      const selectedDate = new Date(dobInput);
+      const currentDate = new Date();
+      const minDate = new Date('1900-01-01');
+
+      if (!nameInput || nameInput.length < 2) {
+        errorBox.classList.remove('hidden');
+        errorTitle.innerText = currentLang === 'si' ? 'නම ඇතුළත් කිරීමේ දෝෂයකි!' : 'Invalid Name Entered!';
+        errorDesc.innerText = currentLang === 'si' ? 'කරුණාකර ඔබගේ නම (අවම වශයෙන් අකුරු 2ක්) ඇතුළත් කරන්න.' : 'Please enter your real name (at least 2 letters).';
+        playMysticChime(220, 0.4);
+        showToast(currentLang === 'si' ? 'කරුණාකර ඔබගේ නම ඇතුළත් කරන්න!' : 'Please enter a valid name!', 'fa-circle-exclamation');
+        document.getElementById('userName').focus();
+        return;
+      }
+
+      if (!dobInput || isNaN(selectedDate.getTime())) {
+        errorBox.classList.remove('hidden');
+        errorTitle.innerText = currentLang === 'si' ? 'උපන් දිනය ඇතුළත් කර නැත!' : 'Birth Date Required!';
+        errorDesc.innerText = currentLang === 'si' ? 'කරුණාකර ඔබගේ නිවැරදි උපන් දිනය තෝරන්න.' : 'Please pick your exact birth date.';
+        playMysticChime(220, 0.4);
+        showToast(currentLang === 'si' ? 'උපන් දිනය ඇතුළත් කර නැත!' : 'Please select your birth date!', 'fa-circle-exclamation');
+        document.getElementById('birthDate').focus();
+        return;
+      }
+
+      if (selectedDate > currentDate) {
+        errorBox.classList.remove('hidden');
+        errorTitle.innerText = currentLang === 'si' ? 'වැරදි උපන් දිනයකි (අනාගත දිනයක්)!' : 'Invalid Date (Future Date)!';
+        errorDesc.innerText = currentLang === 'si' ? 'උපන් දිනය අද දිනට පෙර දිනයක් විය යුතුය. කරුණාකර නිවැරදි දිනය තෝරන්න.' : 'Birth date cannot be in the future. Please select a valid past date.';
+        playMysticChime(220, 0.4);
+        showToast(currentLang === 'si' ? 'උපන් දිනය අනාගත දිනයක් විය නොහැක!' : 'Birth date cannot be in the future!', 'fa-triangle-exclamation');
+        document.getElementById('birthDate').focus();
+        return;
+      }
+
+      if (selectedDate < minDate) {
+        errorBox.classList.remove('hidden');
+        errorTitle.innerText = currentLang === 'si' ? 'අවලංගු වසරකි!' : 'Invalid Year Range!';
+        errorDesc.innerText = currentLang === 'si' ? 'කරුණාකර 1900 න් පසු වලංගු උපන් දිනයක් ඇතුළත් කරන්න.' : 'Please enter a birth year after 1900.';
+        playMysticChime(220, 0.4);
+        showToast(currentLang === 'si' ? 'වලංගු උපන් දිනයක් ඇතුළත් කරන්න!' : 'Please enter a realistic birth date!', 'fa-triangle-exclamation');
+        document.getElementById('birthDate').focus();
+        return;
+      }
+
+      errorBox.classList.add('hidden');
+      const focus = document.querySelector('input[name="focusArea"]:checked').value;
+
+      playMysticChime(432, 2.0);
+      const loader = document.getElementById('loading-overlay');
+      loader.classList.remove('hidden');
+
+      setTimeout(() => {
+        const parts = dobInput.split('-');
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10);
+        const day = parseInt(parts[2], 10);
+
+        const zodiac = getZodiac(month, day);
+        const lifePath = calculateLifePath(year, month, day);
+
+        currentReport = generatePredictions(nameInput, dobInput, focus, zodiac, lifePath);
+        renderResults();
+
+        loader.classList.add('hidden');
+        document.getElementById('input-section').classList.add('hidden');
+        document.getElementById('results-dashboard').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        playMysticChime(852, 2.5);
+        showToast(currentLang === 'si' ? 'ඔබගේ අනාගත වාර්තාව සූදානම්!' : 'Destiny Revelation Ready!');
+      }, 1600);
+    }
+
+    function renderResults() {
+      if (!currentReport) return;
+      const r = currentReport;
+
+      document.getElementById('res-greeting').innerText = currentLang === 'si' 
+        ? `ආයුබෝවන්, ${r.name}!`
+        : `Greetings, ${r.name}!`;
+
+      document.getElementById('res-dob-display').innerText = currentLang === 'si'
+        ? `උපන් දිනය: ${r.birthDate} • තාරකා නක්ෂත්‍ර විමර්ශනය`
+        : `Born: ${r.birthDate} • Cosmic Natal Analysis`;
+
+      document.getElementById('badge-zodiac').innerText = currentLang === 'si' ? `ලග්නය: ${r.zodiac.name_si}` : `Sign: ${r.zodiac.name_en}`;
+      document.getElementById('badge-element').innerText = currentLang === 'si' ? `මූලධාතුව: ${r.zodiac.element_si}` : `Element: ${r.zodiac.element_en}`;
+      document.getElementById('badge-lifepath').innerText = currentLang === 'si' ? `ජන්ම අංකය: ${r.lifePath}` : `Life Path: ${r.lifePath}`;
+
+      document.getElementById('zodiac-icon').className = `fa-solid ${r.zodiac.icon}`;
+      document.getElementById('zodiac-name-display').innerText = currentLang === 'si' ? r.zodiac.name_si : r.zodiac.name_en;
+      document.getElementById('zodiac-ruler').innerText = currentLang === 'si' ? `අධිපති: ${r.zodiac.ruler_si}` : `Ruler: ${r.zodiac.ruler_en}`;
+
+      const handLabel = selectedHand === 'right' 
+        ? (currentLang === 'si' ? 'දකුණු අත' : 'Right Hand') 
+        : (currentLang === 'si' ? 'වම් අත' : 'Left Hand');
+      document.getElementById('sub-res-palm').innerText = `Palmistry Biometric Lines (${handLabel})`;
+
+      document.getElementById('stat-age').innerText = `${r.ageYears} ${currentLang === 'si' ? 'වසරයි' : 'Yrs'}`;
+      document.getElementById('stat-days').innerText = Number(r.diffDays).toLocaleString();
+      document.getElementById('stat-next').innerText = `${r.daysToNext} ${currentLang === 'si' ? 'දින' : 'Days'}`;
+      document.getElementById('stat-path').innerText = `#${r.lifePath}`;
+
+      document.getElementById('desc-pred-wealth').innerText = currentLang === 'si' ? r.predictions.wealth.si : r.predictions.wealth.en;
+      document.getElementById('desc-pred-love').innerText = currentLang === 'si' ? r.predictions.love.si : r.predictions.love.en;
+      document.getElementById('desc-pred-health').innerText = currentLang === 'si' ? r.predictions.health.si : r.predictions.health.en;
+      document.getElementById('desc-pred-destiny').innerText = currentLang === 'si' ? r.predictions.destiny.si : r.predictions.destiny.en;
+
+      document.getElementById('val-lucky-num').innerText = r.zodiac.luckyNums;
+      document.getElementById('val-lucky-col').innerText = currentLang === 'si' ? r.zodiac.luckyColor_si : r.zodiac.luckyColor_en;
+      document.getElementById('val-lucky-day').innerText = currentLang === 'si' ? r.zodiac.luckyDay_si : r.zodiac.luckyDay_en;
+      document.getElementById('val-lucky-gem').innerText = currentLang === 'si' ? r.zodiac.gemstone_si : r.zodiac.gemstone_en;
+    }
+
+    function resetApp() {
+      isPalmScanning = false;
+      isFaceScanning = false;
+
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+        mediaStream = null;
+      }
+      if (palmMediaStream) {
+        palmMediaStream.getTracks().forEach(track => track.stop());
+        palmMediaStream = null;
+      }
+
+      document.getElementById('results-dashboard').classList.add('hidden');
+      document.getElementById('input-section').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function copyDestinyReport() {
+      if (!currentReport) return;
+      const r = currentReport;
+      const handText = selectedHand === 'right' 
+        ? (currentLang === 'si' ? 'දකුණු අත (Right Hand)' : 'Right Hand') 
+        : (currentLang === 'si' ? 'වම් අත (Left Hand)' : 'Left Hand');
+
+      const text = `🌟 COSMIC DESTINY REPORT - අනාගත අනාවැකි 🌟
+Created by Shehan Kavishka
+📱 WhatsApp: 0703347096
+✉️ Email: shehank931@gmail.com
+------------------------------------------------
+නම / Name: ${r.name}
+උපන් දිනය: ${r.birthDate}
+ලග්නය: ${currentLang === 'si' ? r.zodiac.name_si : r.zodiac.name_en}
+ජන්ම අංකය: ${r.lifePath}
+ස්කෑන් කළ අත: ${handText}
+අත් රේඛා කැමරා ස්කෑන්: ${isPalmScanned ? 'සාර්ථකව ස්කෑන් කර තහවුරු විය (Camera Verified)' : 'සාමාන්‍ය විශ්ලේෂණය'}
+මුහුණේ Aura තේජස: ${isFaceScanned ? 'රන්වන් කාන්තිය (Golden Aura Active)' : 'ස්වභාවික තත්ත්වය'}
+වාසනාවන්ත අංක: ${r.zodiac.luckyNums}
+වාසනාවන්ත වර්ණ: ${currentLang === 'si' ? r.zodiac.luckyColor_si : r.zodiac.luckyColor_en}
+සුබ දිනයන්: ${currentLang === 'si' ? r.zodiac.luckyDay_si : r.zodiac.luckyDay_en}
+
+[ධනය හා රැකියාව]:
+${currentLang === 'si' ? r.predictions.wealth.si : r.predictions.wealth.en}
+
+[ආදරය හා සබඳතා]:
+${currentLang === 'si' ? r.predictions.love.si : r.predictions.love.en}
+
+[ජීවිතයේ හැරවුම් ලක්ෂ්‍ය]:
+${currentLang === 'si' ? r.predictions.destiny.si : r.predictions.destiny.en}
+------------------------------------------------
+Cosmic Destiny Predictor • Shehan Kavishka (0703347096 | shehank931@gmail.com)`;
+
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        showToast(currentLang === 'si' ? 'අනාවැකි වාර්තාව සාර්ථකව පිටපත් විය!' : 'Report copied to clipboard!');
+        playMysticChime(741, 0.8);
+      } catch (err) {
+        showToast(currentLang === 'si' ? 'පිටපත් කිරීම අසාර්ථක විය' : 'Failed to copy', 'fa-triangle-exclamation');
+      }
+      document.body.removeChild(textArea);
+    }
+
+    const oracleAnswersSinhala = [
+      "විශ්වයේ ආශිර්වාදය ඔබ සමඟයි, ඔබේ අදහස නියත වශයෙන්ම සාර්ථක වේ!",
+      "කාලය තවම මඳක් මෝරා නැත. තවත් සති කිහිපයක් ඉවසීමෙන් කටයුතු කරන්න.",
+      "හිතවතුන්ගේ උපකාරයෙන් ඔබට නොසිතූ ජයග්‍රහණයක් අත්වේ.",
+      "සැක බිය දුරු කර ඉදිරියටම යන්න. වාසනාව ඔබේ පැත්තේය!",
+      "අලුත් පියවරක් තැබීමට පෙර දෙවරක් සිතන්න. ඉක්මන් තීරණ වලින් වළකින්න.",
+      "ඔබ බලාපොරොත්තු වන මුදල් හෝ ආරංචිය නොබෝ දිනකින් ඔබට ලැබේවි.",
+      "පැරණි දේ අමතක කර අලුත් ආරම්භයකට මුලපුරන්න, එයින් මහත් සෙතක් සැලසේ.",
+      "දෛවය ඔබට නව දොරටුවක් විවර කරමින් පවතී. අවස්ථාවෙන් ප්‍රයෝජන ගන්න!"
+    ];
+
+    const oracleAnswersEnglish = [
+      "The stars strongly favor your intention. Success is assured!",
+      "Patience is required. The cosmic alignment will ripen soon.",
+      "An unexpected mentor or friend will bring the breakthrough you seek.",
+      "Release doubt and forge ahead boldly. Fortune favors your path!",
+      "Look carefully at the details before committing. Discernment is key.",
+      "The financial or positive news you await is approaching swiftly.",
+      "Let go of past hesitation. A fresh chapter brings boundless luck.",
+      "A golden door of destiny is opening for you right now. Step through!"
+    ];
+
+    function consultCrystalBall() {
+      const ansBox = document.getElementById('crystal-oracle-text');
+      playMysticChime(963, 1.8);
+      ansBox.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> ${currentLang === 'si' ? 'Crystal Ball මගින් අනාගතය දර්ශනය වෙමින් පවතී...' : 'Gazing deep into the cosmic ether...'}`;
+
+      setTimeout(() => {
+        const answers = currentLang === 'si' ? oracleAnswersSinhala : oracleAnswersEnglish;
+        const randomIndex = Math.floor(Math.random() * answers.length);
+        ansBox.innerHTML = `✨ "${answers[randomIndex]}" ✨`;
+        playMysticChime(528, 1.2);
+      }, 1000);
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'si' ? 'en' : 'si';
+      const langLabel = document.getElementById('lang-label');
+      langLabel.innerText = currentLang === 'si' ? 'English' : 'සිංහල';
+
+      if (currentLang === 'en') {
+        document.getElementById('hero-badge').innerText = 'Discover the secrets hidden in your birth date & biometric aura';
+        document.getElementById('hero-title').innerHTML = 'Unlock Your <span class="gold-gradient-text">Destiny & Future</span>';
+        document.getElementById('hero-desc').innerText = 'Explore deep astrology, numerology, palmistry, face aura, career, and love milestones through cosmic wisdom.';
+        
+        document.getElementById('pwd-modal-title').innerText = 'Sign In to App';
+        document.getElementById('pwd-modal-desc').innerText = 'Enter your WhatsApp number and secret password';
+        document.getElementById('lbl-login-phone').innerHTML = '<i class="fa-brands fa-whatsapp text-emerald-400 mr-1"></i>WhatsApp Phone Number';
+        document.getElementById('lbl-login-pwd').innerHTML = '<i class="fa-solid fa-key text-amber-400 mr-1"></i>Secret Password';
+        document.getElementById('btn-unlock-text').innerText = 'Login to App';
+
+        document.getElementById('label-name').innerText = 'Your Full Name';
+        document.getElementById('userName').placeholder = 'e.g., Alex Perera';
+        document.getElementById('label-dob').innerText = 'Date of Birth';
+        document.getElementById('label-time').innerText = 'Time of Birth (If known)';
+        document.getElementById('label-gender').innerText = 'Gender';
+        document.getElementById('label-focus').innerText = 'Area of Focus / Highest Interest:';
+
+        document.getElementById('label-scanners-title').innerText = 'Scan Palm Lines & Facial Radiance (Aura)';
+        document.getElementById('palm-card-title').innerText = 'Palmistry Line Scanner';
+        document.getElementById('face-card-title').innerText = 'Facial Aura & Radiance Scanner';
+        document.getElementById('palm-select-label').innerHTML = '<i class="fa-solid fa-arrows-left-right text-amber-400 mr-1"></i>Select Hand:';
+        document.getElementById('btn-palm-right').innerText = 'Right Hand';
+        document.getElementById('btn-palm-left').innerText = 'Left Hand';
+        document.getElementById('lbl-palm-cam-title').innerText = 'Camera Lens:';
+        document.getElementById('lbl-palm-cam-mode').innerText = palmFacingMode === 'environment' ? 'Back Camera' : 'Front Camera';
+        document.getElementById('palm-prompt-text').innerText = `${selectedHand === 'right' ? 'Right' : 'Left'} palm to camera and scan`;
+        document.getElementById('palm-hand-subtext').innerText = selectedHand === 'right' ? 'Analyzes active destiny & self-effort' : 'Analyzes innate luck & karmic blueprint';
+        document.getElementById('face-prompt-text').innerText = 'Scan face with camera / sensor';
+
+        document.getElementById('title-res-palm').innerText = 'Palmistry & Hand Analysis';
+        document.getElementById('title-res-face').innerText = 'Facial Aura & Energy Field';
+        document.getElementById('lbl-life-line').innerText = 'Life Line: ';
+        document.getElementById('lbl-head-line').innerText = 'Head Line: ';
+        document.getElementById('lbl-heart-line').innerText = 'Heart Line: ';
+        document.getElementById('lbl-forehead').innerText = 'Forehead Radiance: ';
+        document.getElementById('lbl-eyes').innerText = 'Eye Magnetism: ';
+        document.getElementById('lbl-aura-type').innerText = 'Aura Shield: ';
+        
+        document.getElementById('opt-all').innerText = 'Full Life Path';
+        document.getElementById('opt-wealth').innerText = 'Wealth & Career';
+        document.getElementById('opt-love').innerText = 'Love & Marriage';
+        document.getElementById('opt-travel').innerText = 'Travel & Luck';
+        document.getElementById('btn-submit-text').innerText = 'Predict My Future';
+
+        document.getElementById('btn-back').innerText = 'Check Again';
+        document.getElementById('btn-copy').innerText = 'Copy Report';
+        document.getElementById('btn-print').innerText = 'Print';
+
+        document.getElementById('stat-age-label').innerText = 'Current Age';
+        document.getElementById('stat-days-label').innerText = 'Days Lived';
+        document.getElementById('stat-next-label').innerText = 'Next Birthday In';
+        document.getElementById('stat-path-label').innerText = 'Life Path Number';
+
+        document.getElementById('title-pred-wealth').innerText = 'Wealth, Career & Finance';
+        document.getElementById('title-pred-love').innerText = 'Love, Marriage & Relations';
+        document.getElementById('title-pred-health').innerText = 'Health, Mind & Vitality';
+        document.getElementById('title-pred-destiny').innerText = 'Milestone Turning Points';
+
+        document.getElementById('title-lucky-box').innerText = 'Your Cosmic Lucky Charms';
+        document.getElementById('lucky-num-label').innerText = 'Lucky Numbers';
+        document.getElementById('lucky-col-label').innerText = 'Lucky Color';
+        document.getElementById('lucky-day-label').innerText = 'Favorable Days';
+        document.getElementById('lucky-gem-label').innerText = 'Gem / Metal';
+
+        document.getElementById('title-crystal-section').innerText = 'Consult the Mystical Crystal Ball';
+        document.getElementById('desc-crystal-section').innerText = 'Focus on any burning question in your heart, then tap the mystic orb below.';
+        document.getElementById('crystal-question').placeholder = 'Enter your question here (e.g. Will I succeed in my exams?)...';
+        document.getElementById('crystal-btn-tap').innerText = 'TOUCH ORB';
+        document.getElementById('crystal-oracle-text').innerText = 'Enter a question and tap the Crystal Ball...';
+      } else {
+        document.getElementById('hero-badge').innerText = 'ඔබේ උපන් දිනය තුළ සැඟවුණු අනාගතය අදම සොයාගන්න';
+        document.getElementById('hero-title').innerHTML = 'ඔබේ <span class="gold-gradient-text">දෛවය හා අනාගතය</span> විවර කරගන්න';
+        document.getElementById('hero-desc').innerText = 'නක්ෂත්‍රය, සංඛ්‍යා විද්‍යාව (Numerology) සහ විශ්ව ශක්තීන් උපයෝගී කරගෙන ඔබේ ආදරය, ධනය, රැකියාව හා ඉදිරි සන්ධිස්ථාන විග්‍රහ කරගන්න.';
+
+        document.getElementById('pwd-modal-title').innerText = 'ගිණුමට පිවිසෙන්න (Login)';
+        document.getElementById('pwd-modal-desc').innerText = 'ඔබගේ WhatsApp අංකය සහ රහස් මුරපදය ඇතුළත් කරන්න';
+        document.getElementById('lbl-login-phone').innerHTML = '<i class="fa-brands fa-whatsapp text-emerald-400 mr-1"></i>WhatsApp අංකය (Phone Number)';
+        document.getElementById('lbl-login-pwd').innerHTML = '<i class="fa-solid fa-key text-amber-400 mr-1"></i>රහස් මුරපදය (Secret Password)';
+        document.getElementById('btn-unlock-text').innerText = 'පිවිසෙන්න (Login to App)';
+
+        document.getElementById('label-name').innerText = 'ඔබේ නම';
+        document.getElementById('userName').placeholder = 'උදා: කසුන් පෙරේරා';
+        document.getElementById('label-dob').innerText = 'උපන් දිනය (Birth Date)';
+        document.getElementById('label-time').innerText = 'උපන් වේලාව (දන්නේ නම් පමණක්)';
+        document.getElementById('label-gender').innerText = 'ස්ත්‍රී / පුරුෂ භාවය';
+        document.getElementById('label-focus').innerText = 'ඔබට වඩාත් දැනගැනීමට අවශ්‍ය අංශය:';
+
+        document.getElementById('label-scanners-title').innerText = 'අත් රේඛා සහ මුහුණේ තේජස (Aura) ස්කෑන් කරන්න';
+        document.getElementById('palm-card-title').innerText = 'අත් රේඛා ස්කෑනරය';
+        document.getElementById('face-card-title').innerText = 'මුහුණු තේජස් ස්කෑනරය';
+        document.getElementById('palm-select-label').innerHTML = '<i class="fa-solid fa-arrows-left-right text-amber-400 mr-1"></i>අත තෝරන්න:';
+        document.getElementById('btn-palm-right').innerText = 'දකුණු අත (Right)';
+        document.getElementById('btn-palm-left').innerText = 'වම් අත (Left)';
+        document.getElementById('lbl-palm-cam-title').innerText = 'කැමරා කාචය:';
+        document.getElementById('lbl-palm-cam-mode').innerText = palmFacingMode === 'environment' ? 'පසුපස කැමරාව (Back Cam)' : 'ඉදිරිපස කැමරාව (Front Cam)';
+        document.getElementById('palm-prompt-text').innerText = `${selectedHand === 'right' ? 'දකුණු' : 'වම්'} අත්ල කැමරාවට පෙන්වා ස්කෑන් කරන්න`;
+        document.getElementById('palm-hand-subtext').innerText = selectedHand === 'right' ? 'ස්වෝත්සාහය සහ වර්තමාන කර්මය විග්‍රහ කෙරේ' : 'උත්පත්ති වාසනාව සහ ආත්මීය ශක්තිය විග්‍රහ කෙරේ';
+        document.getElementById('face-prompt-text').innerText = 'කැමරාවෙන් මුහුණ ස්කෑන් කරන්න';
+
+        document.getElementById('title-res-palm').innerText = 'අත් රේඛා සාමුද්‍රික පරීක්ෂාව';
+        document.getElementById('title-res-face').innerText = 'මුහුණේ තේජස හා ශක්ති වලල්ල';
+        document.getElementById('lbl-life-line').innerText = 'ජීවන රේඛාව (Life Line): ';
+        document.getElementById('lbl-head-line').innerText = 'ශීර්ෂ රේඛාව (Head Line): ';
+        document.getElementById('lbl-heart-line').innerText = 'හෘද රේඛාව (Heart Line): ';
+        document.getElementById('lbl-forehead').innerText = 'නළල් තලය (Forehead Radiance): ';
+        document.getElementById('lbl-eyes').innerText = 'දෙනෙත් ආලෝකය (Eye Magnetism): ';
+        document.getElementById('lbl-aura-type').innerText = 'ශක්ති වලල්ල (Vibrational Aura): ';
+
+        document.getElementById('opt-all').innerText = 'සම්පූර්ණ අනාගතය';
+        document.getElementById('opt-wealth').innerText = 'ධනය හා රැකියාව';
+        document.getElementById('opt-love').innerText = 'ආදරය හා විවාහය';
+        document.getElementById('opt-travel').innerText = 'විදේශ ගමන් & වාසනාව';
+        document.getElementById('btn-submit-text').innerText = 'අනාගත අනාවැකිය විවර කරන්න (Predict My Future)';
+
+        document.getElementById('btn-back').innerText = 'නැවත පරීක්ෂා කරන්න';
+        document.getElementById('btn-copy').innerText = 'වාර්තාව පිටපත් කරගන්න (Copy)';
+        document.getElementById('btn-print').innerText = 'මුද්‍රණය (Print)';
+
+        document.getElementById('stat-age-label').innerText = 'සම්පූර්ණ වයස';
+        document.getElementById('stat-days-label').innerText = 'ගත වූ දින ගණන';
+        document.getElementById('stat-next-label').innerText = 'මීළඟ උපන් දිනයට';
+        document.getElementById('stat-path-label').innerText = 'ජන්ම අංකය';
+
+        document.getElementById('title-pred-wealth').innerText = 'ධනය, ව්‍යාපාර හා රැකියාව';
+        document.getElementById('title-pred-love').innerText = 'ආදරය, විවාහය හා සබඳතා';
+        document.getElementById('title-pred-health').innerText = 'සෞඛ්‍යය හා ජීව ශක්තිය';
+        document.getElementById('title-pred-destiny').innerText = 'ජීවිතයේ හැරවුම් ලක්ෂ්‍ය';
+
+        document.getElementById('title-lucky-box').innerText = 'ඔබට හිමි විශ්වීය වාසනාවන්ත කරුණු';
+        document.getElementById('lucky-num-label').innerText = 'වාසනාවන්ත අංක';
+        document.getElementById('lucky-col-label').innerText = 'වාසනාවන්ත වර්ණය';
+        document.getElementById('lucky-day-label').innerText = 'සුබ දිනයන්';
+        document.getElementById('lucky-gem-label').innerText = 'සුබ මැණික / ලෝහය';
+
+        document.getElementById('title-crystal-section').innerText = 'අධි-මානසික Crystal Ball වෙතින් ක්ෂණික පිළිතුරක් ලබාගන්න';
+        document.getElementById('desc-crystal-section').innerText = 'ඔබට සිතට වදදෙන ඕනෑම ප්‍රශ්නයක් සිතින් සිතා, පහත ඇති මායාකාරී බෝලය ස්පර්ශ කරන්න.';
+        document.getElementById('crystal-question').placeholder = 'ඔබේ ප්‍රශ්නය මෙතැන ලියන්න (උදා: මාගේ විභාගය සාර්ථක වේවිද?)...';
+        document.getElementById('crystal-btn-tap').innerText = 'ස්පර්ශ කරන්න';
+        document.getElementById('crystal-oracle-text').innerText = 'ප්‍රශ්නයක් ඇතුළත් කර Crystal Ball එක මත ක්ලික් කරන්න...';
+      }
+
+      if (currentReport) {
+        renderResults();
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('birthDate').value = '2000-05-15';
+      setTimeout(() => {
+        openLoginModal();
+      }, 300);
+    });
+  </script>
+</body>
+</html>
